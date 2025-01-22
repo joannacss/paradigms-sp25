@@ -8,6 +8,15 @@ let user3 = {name: "Mark", birth_year: 2002}; // initializing it with values
 console.log(user3.name);
 console.log(user3.age);
 
+
+// iterating over proprties of an object
+for (let attribute in user3) {
+    console.log(`${attribute}: ${user3[attribute]}`);
+}
+Object.keys(user3).forEach(attribute => {
+    console.log(`${attribute}: ${user3[attribute]}`);
+});
+
 // what happens on the code below?
 console.log(user2.name);
 
