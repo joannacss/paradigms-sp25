@@ -1,6 +1,5 @@
 // DEMO - PART1: BASIC FUNCTION DECLARATION
-// 		- with / without arguments
-// 		- with / without return
+// Example: a function that sum all the elements in an array
 function sumArray(arr){
 	let total = 0;
 	for (let i = 0; i < arr.length; i++){
@@ -8,29 +7,19 @@ function sumArray(arr){
 	}
 	return total;
 }
-let arr = [1,2,3,"4"];
+let arr = [1,2,3,4];
 console.log(`${sumArray(arr)}`);
 
 
 // DEMO - PART2: FUNCTION EXPRESSIONS (variable = function() {})
-let add = function(a,b){
-	return a + b;
-};
-
-console.log( add( 1, 2));
+// Example: function that adds two numbers (a, b)
 
 
 // DEMO - PART3: ARROW FUNCTIONS (...) => (expression)
-let isEven = (x) => {
-	return x % 2 === 0;
-}; 
-console.log(isEven(10));
+// Example: a function (isEven) that returns true if number is even.
 
 
 // DEMO - PART4: CALLBACK FUNCTIONS
-
-
-
-
+// Example: a function calculate that takes as parameters an operation and two values a and b
 
 

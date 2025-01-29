@@ -1,6 +1,6 @@
 //DEMO: try to invoke each of them
 
-sayHello3();
+
 
 // function declaration
 function sayHello1(){
