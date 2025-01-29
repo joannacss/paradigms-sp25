@@ -1,5 +1,7 @@
+// -------------------------------------------------------------------------
 // EXAMPLE 1: imperative-style
 // returns true if all elements are below or equals to a given threshold
+// -------------------------------------------------------------------------
 function isBelowThreshold(array, threshold){
 	for(let i = 0; i < array.length ; i++){
 		if(array[i] > threshold)
@@ -12,38 +14,36 @@ let output1 = isBelowThreshold(array1, 40);
 console.log(`DEMO1 (imperative): ${output1}`);	// true
 
 
-// // DEMO 1: Array.every(callback[,thisArg]) 
-// let callback = (x) => x <= 40;
-let callback = function(x){
-	return x <= 40;
-};
-let outputDemo1 =  array1.every(callback); 
+// DEMO 1: Array.every(callback[,thisArg]) 
+let outputDemo1 = /* ... TODO ... */;
 console.log(`DEMO1 (declarative): ${outputDemo1}`);
 
 
 // -------------------------------------------------------------------------
 // EXAMPLE 2: imperative-style
-// compute all words whose size are higher than a given wordLength
-function getAllWords(words, wordLength){
+// return an array of all words whose size are higher than 6.
+// -------------------------------------------------------------------------
+function getAllWords(words){
 	let result = [];
 	for(let i = 0; i < words.length ; i++){
-		if(words[i].length > wordLength)
+		if(words[i].length > 6)
 			result.push(words[i]);
 	}
 	return result;
 }
 const words = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present'];
-let output2 = getAllWords(words, 6);
+let output2 = getAllWords(words); // [exuberant,destruction,present]
 console.log(`DEMO2 (imperative): ${output2}`) 
 
 // DEMO2: Array.filter(callback[,thisArg]) 
-let outputDemo2 = words.filter((x) => x.length > 6);
+let outputDemo2 = /* ... TODO ... */;
 console.log(`DEMO2 (declarative):${outputDemo2}`);
 
 
 // -------------------------------------------------------------------------
 // EXAMPLE 3: imperative-style
 // Returns a new array in which each element is multiplied by 2
+// -------------------------------------------------------------------------
 function multiplyByTwo(array){
 	let result = [];
 	for(let i = 0; i < array.length ; i++){
@@ -56,12 +56,13 @@ let output3 = multiplyByTwo(demo3Arr);
 console.log(`DEMO3 (imperative): ${output3}`); // [2, 8, 18, 32]
 
 // DEMO3: Array.map(callback[,thisArg])
-let outputDemo3 = demo3Arr.map((x) => x*2);
+let outputDemo3 = /* ... TODO */;
 console.log(`DEMO3 (declarative): ${outputDemo3}`);
 
 // -------------------------------------------------------------------------
 // EXAMPLE 4: imperative-style
 // Given an array of objects, create a new array with only IDs
+// -------------------------------------------------------------------------
 function extractIds(array){
 	let result = [];
 	for(let i = 0; i < array.length ; i++){
@@ -78,15 +79,15 @@ let people = [
 let output4 = extractIds(people);
 console.log(`DEMO4 (imperative): ${output4}`) // [20, 24, 56, 88]
 
-// // DEMO4: Using map to achieve this goal
-var callback4 = (x) => x.id;
-let outputDemo4 = people.map(callback4);
+// DEMO4: Using map to achieve this goal
+let outputDemo4 = /* ... TODO ... */;
 console.log(`DEMO4 (imperative): ${outputDemo4}`) // [20, 24, 56, 88]
 
 
 // -------------------------------------------------------------------------
 // EXAMPLE 5: imperative-style
 // Sum all numbers in the array
+// -------------------------------------------------------------------------
 function computeSum(array){
 	let result = 0;
 	for(let i = 0; i < array.length ; i++){
@@ -94,15 +95,14 @@ function computeSum(array){
 	}
 	return result;
 }
-const array5 = [1, 2, 3, 4];
+const array5 = [1, 2, 3, 4]; // TODO: what the output would be if array5 = [1, 2, 3, "4"]
 let output5 = computeSum(array5);
 console.log(`DEMO5 (imperative): ${output5}`) // 10
 
 
 // DEMO5: Array.reduce(callback[,initialValue])
 // reducer(accumulator, currentValue, currentIndex, currentArray)
-let initialValue = 0;
-let outputDemo5 = array5.reduce((accumulator, x) => accumulator + x, initialValue);
+let outputDemo5 = /* ... TODO ... */;
 console.log(`DEMO5 (declarative): ${outputDemo5}`) // 10
 
 
@@ -121,10 +121,6 @@ let output6 = sumOfEvenSquares(array6);
 console.log(`DEMO6 (imperative): ${output6}`); // 80
 
 // DEMO6: combining filter, map, reduce!
-let callback6 = (x) => x%2 == 0;
-let firstOutput6 = array6.filter(callback6);
-let init = 0;
-let callback6a = (sum,x) => sum = sum + x*x;
-let outputDemo6 = firstOutput6.reduce(callback6a,init);
+let outputDemo6 = /* ... TODO ... */;
 console.log(`DEMO6 (declarative): ${outputDemo6}`); // 80
 
