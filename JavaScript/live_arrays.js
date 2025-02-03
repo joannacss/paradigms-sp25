@@ -62,68 +62,82 @@ let callback3 = (n) => n *2;
 let outputDemo3 = demo3Arr.map(callback3);
 console.log(`DEMO3 (declarative): ${outputDemo3}`);
 
-// // -------------------------------------------------------------------------
-// // EXAMPLE 4: imperative-style
-// // Given an array of objects, create a new array with only IDs
-// // -------------------------------------------------------------------------
-// function extractIds(array){
-// 	let result = [];
-// 	for(let i = 0; i < array.length ; i++){
-// 		result.push(array[i].id);
-// 	}
-// 	return result;
-// }
-// let people = [
-//   { id: 20, name: 'Peter' },
-//   { id: 24, name: 'Jane' },
-//   { id: 56, name: 'Joe' },
-//   { id: 88, name: 'Jennifer' }
-// ];
-// let output4 = extractIds(people);
-// console.log(`DEMO4 (imperative): ${output4}`) // [20, 24, 56, 88]
+// -------------------------------------------------------------------------
+// EXAMPLE 4: imperative-style
+// Given an array of objects, create a new array with only IDs
+// -------------------------------------------------------------------------
+function extractIds(array){
+	let result = [];
+	for(let i = 0; i < array.length ; i++){
+		result.push(array[i].id);
+	}
+	return result;
+}
+function extractIds_map(array){
+	let callback = (a) => a.id;
+	return array.map(callback);
+}
+let people = [
+  { id: 20, name: 'Peter' },
+  { id: 24, name: 'Jane' },
+  { id: 56, name: 'Joe' },
+  { id: 88, name: 'Jennifer' }
+];
+let output4 = extractIds(people);
+console.log(`DEMO4 (imperative): ${output4}`) // [20, 24, 56, 88]
 
-// // DEMO4: Using map to achieve this goal
-// let outputDemo4 = /* ... TODO ... */;
-// console.log(`DEMO4 (imperative): ${outputDemo4}`) // [20, 24, 56, 88]
-
-
-// // -------------------------------------------------------------------------
-// // EXAMPLE 5: imperative-style
-// // Sum all numbers in the array
-// // -------------------------------------------------------------------------
-// function computeSum(array){
-// 	let result = 0;
-// 	for(let i = 0; i < array.length ; i++){
-// 		result += array[i];
-// 	}
-// 	return result;
-// }
-// const array5 = [1, 2, 3, 4]; // TODO: what the output would be if array5 = [1, 2, 3, "4"]
-// let output5 = computeSum(array5);
-// console.log(`DEMO5 (imperative): ${output5}`) // 10
+// DEMO4: Using map to achieve this goal
+let outputDemo4 = extractIds_map(people);
+console.log(`DEMO4 (declarative): ${outputDemo4}`) // [20, 24, 56, 88]
 
 
-// // DEMO5: Array.reduce(callback[,initialValue])
-// // reducer(accumulator, currentValue, currentIndex, currentArray)
-// let outputDemo5 = /* ... TODO ... */;
-// console.log(`DEMO5 (declarative): ${outputDemo5}`) // 10
+// -------------------------------------------------------------------------
+// EXAMPLE 5: imperative-style
+// Sum all numbers in the array
+// -------------------------------------------------------------------------
+function computeSum(array){
+	let result = 0;
+	for(let i = 0; i < array.length ; i++){
+		result += Number(array[i]);
+	}
+	return result;
+}
+const array5 = ["1", 2, "3", 4]; // TODO: what the output would be if array5 = [1, 2, 3, "4"]
+let output5 = computeSum(array5);
+console.log(`DEMO5 (imperative): ${output5}`) // 10
 
 
-// // //Example6: Sum the squares of the elements on the even elements
-// function sumOfEvenSquares(array){
-// 	let sum = 0;
-// 	for(let i = 0; i < array.length ; i++){
-// 		if(array[i] % 2 == 0)
-// 			sum += array[i] * array[i];
-// 	}
-// 	return sum;
-// }
+// DEMO5: Array.reduce(callback[,initialValue])
+// reducer(accumulator, currentValue, currentIndex, currentArray)
+let callback5 = (previousValue, currentValue) => previousValue + currentValue;
+let outputDemo5 = array5.reduce(callback5, 10);
+console.log(`DEMO5 (declarative): ${outputDemo5}`) // 10
+let out52 = array5.reduce(callback5);
 
-// let array6 = [4, 11, 25, 23, 8];
-// let output6 = sumOfEvenSquares(array6);
-// console.log(`DEMO6 (imperative): ${output6}`); // 80
 
-// // DEMO6: combining filter, map, reduce!
-// let outputDemo6 = /* ... TODO ... */;
-// console.log(`DEMO6 (declarative): ${outputDemo6}`); // 80
+
+
+// //Example6: Sum the squares of the elements on the even elements
+function sumOfEvenSquares(array){
+	let sum = 0;
+	for(let i = 0; i < array.length ; i++){
+		if(array[i] % 2 == 0)
+			sum += array[i] * array[i];
+	}
+	return sum;
+}
+
+let array6 = [4, 11, 25, 23, 8];
+let output6 = sumOfEvenSquares(array6);
+console.log(`DEMO6 (imperative): ${output6}`); // 80
+
+// DEMO6: combining filter, map, reduce!
+callback6 = (value) => value % 2 == 0
+callback7 = (value) => value * value
+let outputDemo6 = array6.filter(callback6)
+outputDemo6 = outputDemo6.map(callback7)
+outputDemo6 = outputDemo6.reduce(callback5)
+//console.log(finalResult)
+// =/* ... TODO ... */;
+console.log(`DEMO6 (declarative): ${outputDemo6}`); // 80
 
