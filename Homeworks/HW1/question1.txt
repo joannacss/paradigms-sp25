@@ -1,1 +1,23 @@
 Answer here
+1.1 Scope for all variables:
+    variable a has a global scope 
+    variable b has a function scope
+    variable c has a global scope and block scope due to variable shadowing of c
+    variable d has a block scope
+
+1.2 Explaining Excution
+    Program outputs following with explanation:
+    6   
+        //This is the result of the console.log statement within the function if statement of a + b + c. 
+        //a has been declared and intialized on the global scope as 1 using let, b has been declared and 
+        //intialized to 2 on the function scope using var, and c has been declared and intialized to 3 
+        //using let with variable shawdowing (overwriting the globaly declared c using var). This results in 1+2+3=6
+    3
+        //This is the result of the console.log statement within the function after the if statement block. This is simply the globally defined a plus the function defined b (1+2=3).
+    1   
+        //This is a console.log statement of the value of a which is globally defined
+    20  
+        //This is the console.log statement of the globally defined c value using var.
+    ERROR 
+        //This is a reference error due to an attempt to reference d out of its block scope.
+
