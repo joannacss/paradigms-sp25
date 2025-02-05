@@ -5,8 +5,8 @@ class Graph {
   }
 
   /**
-   * Adds a vertex to the graph.
-   * @param {string} vertex - The name (or label) of the vertex.
+   * Adds a node to the graph.
+   * @param {string} n - The name (or label) of the n.
    */
   addNode(n) {
     if (!this.adjacencyList.has(n)) {
@@ -34,8 +34,8 @@ class Graph {
 
   /**
    * Performs a Breadth-First Search (BFS) starting from 'startNode'.
-   * @param {string} startNode - The vertex from which to begin BFS.
-   * @returns {string[]} The order in which the vertices were visited.
+   * @param {string} startNode - The node from which to begin BFS.
+   * @returns {string[]} The order in which the nodes were visited.
    */
   bfs(startNode) {
     if(!this.adjacencyList.has(startNode)) return []; // node doesnt exist in graph!
@@ -61,8 +61,8 @@ class Graph {
 
   /**
    * Performs a Depth-First Search (DFS) starting from 'startNode'.
-   * @param {string} startNode - The vertex from which to begin DFS.
-   * @returns {string[]} The order in which the vertices were visited.
+   * @param {string} startNode - The node from which to begin DFS.
+   * @returns {string[]} The order in which the nodes were visited.
    */
     dfs(startNode) {
         if(!this.adjacencyList.has(startNode)) return [];

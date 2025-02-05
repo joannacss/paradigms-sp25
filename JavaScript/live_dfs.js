@@ -21,7 +21,23 @@ class Graph {
   }
 
   dfs(startNode) {
-    // TODO: live demo lecture 7
+    // Initializes relevant data structures
+      // a stack initialized with the startNode
+      // a set that tracks nodes already visited
+      // the output to be returned
+
+    // iterate over each node to be visited (in the stack)
+
+      // pop node from the stack
+
+      // check if node is visited
+
+      // add node to the output
+      // mark node as visited
+
+      // traverse children nodes
+
+    // return the results (list of nodes)
   }
 
   bfs(startNode) {
