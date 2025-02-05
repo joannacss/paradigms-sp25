@@ -38,6 +38,7 @@ class Graph {
    * @returns {string[]} The order in which the vertices were visited.
    */
   bfs(startNode) {
+    if(!this.adjacencyList.has(startNode)) return []; // node doesnt exist in graph!
     const visited = new Set();
         const queue = [startNode];
         const result = [];
@@ -64,6 +65,7 @@ class Graph {
    * @returns {string[]} The order in which the vertices were visited.
    */
     dfs(startNode) {
+        if(!this.adjacencyList.has(startNode)) return [];
         const visited = new Set();
         const stack = [startNode];
         const result = [];
