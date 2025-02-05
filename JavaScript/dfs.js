@@ -1,51 +1,111 @@
-/**
- * Function that performs depth-first search traversal.
- * @param graph A directed graph represented as an adjency matrix.
- * @param root The initial node to start the traversal
- */
-function dfs(graph, root){
-    // initializes relevant data structures
-    toVisit = [root];        // stack initialized with root node
-    output = [];             // output to be returned
-    visited = new Set();     // set that tracks already visited node
-    
-    // iterate over each node to be visited
-    while(toVisit.length > 0){
-        // pop the node from the toVisit stack
-        node = toVisit.pop();
-        // check if node is visited
-        if (!visited.has(node)){
-            output.push(node); // add node to the output
-            visited.add(node); // mark node as visited       
-            // iterate over the children (in reverse order)
-            let children = graph[node];
-            for(let i = children.length - 1 ; i >= 0 ; i--){
-                toVisit.push(children[i]);
-            }
-        }
+class Graph {
+  constructor() {
+    // Using a Map where keys are vertices and values are arrays of adjacent vertices
+    this.adjacencyList = new Map();
+  }
+
+  /**
+   * Adds a vertex to the graph.
+   * @param {string} vertex - The name (or label) of the vertex.
+   */
+  addNode(n) {
+    if (!this.adjacencyList.has(n)) {
+      this.adjacencyList.set(n, []);
+    }
+  }
+
+  /**
+   * Adds a directed edge between two nodes n1 --> n2.
+   * If the vertices do not exist yet, they will be created.
+   * @param {string} n1
+   * @param {string} n2
+   */
+  addEdge(n1, n2) {
+    if (!this.adjacencyList.has(n1)) {
+      this.addNode(n1);
+    }
+    if (!this.adjacencyList.has(n2)) {
+      this.addNode(n2);
     }
 
-    return output;
+    // Add n2 to n1's adjacency list
+    this.adjacencyList.get(n1).push(n2);    
+  }
+
+  /**
+   * Performs a Breadth-First Search (BFS) starting from 'startNode'.
+   * @param {string} startNode - The vertex from which to begin BFS.
+   * @returns {string[]} The order in which the vertices were visited.
+   */
+  bfs(startNode) {
+    const visited = new Set();
+        const queue = [startNode];
+        const result = [];
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            // check if node has already been visited
+            if(!visited.has(current)){
+                visited.add(current); // mark as visited
+                result.push(current); // add to the output
+                // traverse children nodes
+                let children = this.adjacencyList.get(current);
+                for(let i = 0 ; i < children.length ; i++){
+                    queue.push(children[i]);                    
+                }
+            }      
+        }
+        return result;
+  }
+
+  /**
+   * Performs a Depth-First Search (DFS) starting from 'startNode'.
+   * @param {string} startNode - The vertex from which to begin DFS.
+   * @returns {string[]} The order in which the vertices were visited.
+   */
+    dfs(startNode) {
+        const visited = new Set();
+        const stack = [startNode];
+        const result = [];
+
+        while (stack.length > 0) {
+            const current = stack.pop();
+            // check if node has already been visited
+            if(!visited.has(current)){
+                visited.add(current); // mark as visited
+                result.push(current); // add to the output
+                // traverse children nodes
+                let children = this.adjacencyList.get(current);
+                for(let i = children.length - 1 ; i >= 0 ; i--){
+                    stack.push(children[i]);                    
+                }
+            }      
+        }
+        return result;
+    }
 }
 
+// Examples:
+let g1 = new Graph();
+g1.addEdge("+", "*");
+g1.addEdge("+", 3);
+g1.addEdge("*", 2);
+g1.addEdge("*", 7);
+console.log(g1);
+console.log(g1.dfs("+"));
+console.log(g1.bfs("+"));
 
 
-assert = require('assert');
+let g2 = new Graph();
+g2.addEdge(0, 1);
+g2.addEdge(0, 3);
+g2.addEdge(1, 2);
+g2.addEdge(1, 3);
+g2.addEdge(2, 3);
+g2.addEdge(2, 1);
+g2.addEdge(3, 0);
+g2.addEdge(3, 1);
+console.log(g2);
+console.log(g2.dfs(0));
+console.log(g2.bfs(0));
 
-
-
-
-// assert.deepStrictEqual: this method from the assert module verifies whether the two arrays have the same element values.
-// That is, it does a 'deep' equality check (ie, values within the array)
-// if the test fails, it throws an error
-
-
-// test case 1
-graph = {"+": ["*",3], "*":[2,7], 2:[],7:[],3:[]};
-root = "+" ;
-assert.deepStrictEqual(dfs(graph, root), ['+', '*', 2, 7, 3])
-
-// test case 2
-graph = {0: [1,3], 1:[2,3], 2:[3,1], 3:[0,1]};
-root = 0 ;
-assert.deepStrictEqual(dfs(graph, root), [0, 1, 2, 3])
