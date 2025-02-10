@@ -22,26 +22,6 @@ userFunction2()
 
 // DEMO: how to use closures to solve this problem?
 
-let nextOddNumberGenerator = function(){
-	let innerCounter = 1;
-	return () => {
-		let output = innerCounter;
-		innerCounter = innerCounter + 2;
-		return output;
-	};
-}
 
-
-
-var generator1 = nextOddNumberGenerator();
-var generator2 = nextOddNumberGenerator();
-
-console.log(generator1());
-console.log(generator1());
-console.log(generator1());
-
-console.log(generator2());
-console.log(generator2());
-console.log(generator2());
 
 
