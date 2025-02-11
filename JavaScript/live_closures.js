@@ -16,6 +16,14 @@ function userFunction2(){
 	console.log(`userFunction2 ${nextOddNumber()}`)
 }
 
+
+function userFunction3(){
+	console.log(`userFunction3 ${nextOddNumber()}`)
+	console.log(`userFunction3 ${nextOddNumber()}`)
+}
+
+
+
 userFunction1()
 userFunction2()
 
@@ -31,10 +39,10 @@ function nextOddNumberClosure(){
 }
 
 let generator1 = nextOddNumberClosure();
-console.log(generator1());
-console.log(generator1());
-console.log(generator1());
-console.log(generator1());
+console.log(generator1()); // 1
+console.log(generator1()); // 3
+console.log(generator1()); // 5
+console.log(generator1()); // 7
 
 let generator2 = nextOddNumberClosure();
 console.log(generator2());
