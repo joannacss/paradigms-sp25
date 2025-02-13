@@ -1,0 +1,13 @@
+/* Selects all <h1> and <h2> elements in the page */
+h1, h2 {color:  purple;}
+
+/* Selects the HTML element with id = "result-parent" */
+#result-parent {
+	font-size: 12pt; 
+	visibility: hidden; /* element is initially hidden */
+}
+
+/* Selects all the "div" elements whose class = "myparagraph" */
+div.myparagraph { color:  red; }
+
+
