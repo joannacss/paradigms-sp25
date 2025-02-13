@@ -1,0 +1,13 @@
+/* Add example of selector by tag */
+div {color: yellow;}
+
+/* Add example of selector by class value */
+
+p.myHeading, div { 
+	font-size: 40pt; 
+	background-color: red;
+}
+
+/* Add example of selector by id */
+#result { color: black; }
+
