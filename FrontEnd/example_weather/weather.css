@@ -1,9 +1,19 @@
 /* Add example of selector by tag: make h1, h2 colors = purple */
-
+p {
+    font-size: 42pt;
+ }
 
 /* Add example of selector by class value: make .myparagraph font-size = 16pt */
+ .myHeading {
+    background-color: green;
+ }
+
 
 
 /* Add example of selector by id: make #result-parent color = red */
+ #result {
+    color: pink;
+ }
+
 
 
