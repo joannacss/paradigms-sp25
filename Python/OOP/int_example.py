@@ -3,7 +3,7 @@ class int:
         self.x = x
 
     def __add__(self, obj):
-        return "10 years"
+        return self.x - obj.x
 
 a = int(1)
 b = int(2)
