@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-
+from pathlib import Path
 
 class Location:
     def __init__(self, lat, lng):
@@ -15,7 +15,7 @@ class Location:
 # meant to just specify the operations
 class Document(ABC):
     def __init__(self, filepath):
-        self.filepath = filepath
+        self.filepath = Path(filepath)
 
     @abstractmethod
     def save(self, coordinates):
@@ -42,5 +42,5 @@ london = Location(51.507351, -0.127758)
 chicago = Location(41.878113, -87.629799)
 south_bend = Location(1.676388, -86.250275)
 
-d = Document("document.txt")
+d = JsonDocument("coordinates.json")
 d.save([london, chicago, south_bend])
