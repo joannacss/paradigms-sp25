@@ -22,6 +22,6 @@ class Sheep(Animal):
 
 
 if __name__ == '__main__':
-    animals = [ Cow('Bessie'), Sheep('Little Lamb')]
+    animals = [ Horse('CJ'), Cow('Bessie'), Sheep('Little Lamb')]
     for a in animals:
         print(a.speak())
