@@ -1,20 +1,16 @@
 class Animal:
     def __init__(self, name):
         self.name = name
-
     def speak(self):
         return f'{self.name} says {self.sound()}'
-
 
 class Cow(Animal):
     def sound(self):
         return 'moooo'
 
-
 class Horse(Animal):
     def sound(self):
         return 'neigh'
-
 
 class Sheep(Animal):
     def sound(self):

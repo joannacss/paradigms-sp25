@@ -1,20 +1,17 @@
-import os
+from pathlib import Path
 
-from animal import Animal
 from animal import Cow
 
 
 class Vocalizer:
     def speak(self):
         class_name = self.__class__.__name__
-        print(f"What does the {class_name} say?")
         try:
             from playsound import playsound
-            current_dir = os.path.dirname(os.path.realpath(__file__))
-            playsound(os.path.join(current_dir, 'sound', f'{class_name}.mp3'))
+            playsound(Path(f'./sound/{class_name}.mp3'))
         except:
-            print('You likely forgot to pip install playsound PyObjC')
-        return self.sound()
+            print('You likely forgot to run `pip install playsound PyObjC`')
+        return f"What does the {class_name} say? {self.sound()}"
 
 
 class EvilCow(Vocalizer, Cow):
@@ -22,16 +19,16 @@ class EvilCow(Vocalizer, Cow):
         return "moo ha ha mwahaha"
 
 
-class ConfusedCat(Vocalizer, Animal):
-    def sound(self):
-        return "uh?"
-
-
 if __name__ == '__main__':
     c = EvilCow('Bessie')
-    print(c.speak())  # conflict: what the output should be in here?
     print(EvilCow.mro())
+    print(c.speak())  # conflict: what the output should be in here?
 
-    cat = ConfusedCat("Kratos")
-    print(cat.speak()) # conflict: what the output should be in here?
-    print(ConfusedCat.mro())
+
+# TODO: demo 2: multiple inheritance
+# class ConfusedCat(Vocalizer, Animal):
+#     def sound(self):
+#         return "uh?"
+# cat = ConfusedCat("Kratos")
+# print(cat.speak())  # conflict: what the output should be in here?
+# print(ConfusedCat.mro())
