@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from animal import Cow
-
+from animal import Animal
 
 class Vocalizer:
     def speak(self):
@@ -18,17 +18,18 @@ class EvilCow(Vocalizer, Cow):
     def sound(self):
         return "moo ha ha mwahaha"
 
+# TODO: demo 2: multiple inheritance
+class ConfusedCat(Vocalizer, Animal):
+    def sound(self):
+        return "uh?"
 
 if __name__ == '__main__':
-    c = EvilCow('Bessie')
-    print(EvilCow.mro())
-    print(c.speak())  # conflict: what the output should be in here?
+    # c = EvilCow('Bessie')
+    # print(EvilCow.mro())
+    # print(c.speak())  # conflict: what the output should be in here?
 
 
-# TODO: demo 2: multiple inheritance
-# class ConfusedCat(Vocalizer, Animal):
-#     def sound(self):
-#         return "uh?"
-# cat = ConfusedCat("Kratos")
-# print(cat.speak())  # conflict: what the output should be in here?
-# print(ConfusedCat.mro())
+
+    cat = ConfusedCat("Kratos")
+    print(cat.speak())  # conflict: what the output should be in here?
+    # print(ConfusedCat.mro())
