@@ -1,16 +1,16 @@
 [
     {
-        "latitute": 51.507351,
+        "latitude": 51.507351,
         "longitude": -0.127758,
         "distance_to_campus": 6280.389818386216
     },
     {
-        "latitute": 41.878113,
+        "latitude": 41.878113,
         "longitude": -87.629799,
         "distance_to_campus": 116.93391567702191
     },
     {
-        "latitute": 1.676388,
+        "latitude": 1.676388,
         "longitude": -86.250275,
         "distance_to_campus": 4450.7674478025765
     }

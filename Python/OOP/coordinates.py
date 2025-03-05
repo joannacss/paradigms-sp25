@@ -23,7 +23,7 @@ class Document(ABC):
     """
     Represents a document that can save a list of coordinates.
     """
-    ND_CAMPUS = Location(41.7031, -86.2390)
+    ND_CAMPUS = Location(41.7031, -86.2390) # static
 
     def __init__(self, filepath: str):
         self.filepath = Path(filepath)
@@ -56,14 +56,14 @@ class Document(ABC):
 class CsvDocument(Document):
     def save(self, coordinates: list[Location]):
         with open(self.filepath, "w") as csv_file:
-            csv_file.write(f"latitute\tlongitude\tdistance_to_campus\n")
+            csv_file.write(f"latitude\tlongitude\tdistance_to_campus\n")
             for c in coordinates:
                 csv_file.write(f"{c.latitude}\t{c.longitude}\t{Document.distance(c)}\n")
 
 
 class JsonDocument(Document):
     def save(self, coordinates: list[Location]):
-        as_dict = [{"latitute": x.latitude, "longitude": x.longitude, "distance_to_campus": Document.distance(x)}
+        as_dict = [{"latitude": x.latitude, "longitude": x.longitude, "distance_to_campus": Document.distance(x)}
                    for x in coordinates]
         json_object = json.dumps(as_dict, indent=4)
         with open(self.filepath, "w") as json_file:
@@ -74,5 +74,5 @@ london = Location(51.507351, -0.127758)
 chicago = Location(41.878113, -87.629799)
 south_bend = Location(1.676388, -86.250275)
 
-d = JsonDocument("coordinates.json")
+d = CsvDocument("coordinates.csv")
 d.save([london, chicago, south_bend])
