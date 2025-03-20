@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Last five published questions</title>
+    </head>
+    <body>
+    <ul>
+    {% if questions %}
+        {% for question in questions %}
+            <li>
+                <a href="/polls/{{ question.id }}/">
+                {{ question }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>We dont have any questions yet :(</p>
+    {% endif %}
+
+    </ul>
+    </body>
+</html>
