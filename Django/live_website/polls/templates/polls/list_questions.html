@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Last five published questions</title>
-    </head>
-    <body>
+{% extends 'polls/base.html' %}
+
+{% block title %}List of all latest 5 questions{% endblock %}
+
+{% block content %}
     <ul>
     {% if questions %}
         {% for question in questions %}
@@ -19,5 +17,4 @@
     {% endif %}
 
     </ul>
-    </body>
-</html>
+{% endblock %}
