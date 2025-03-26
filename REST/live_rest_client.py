@@ -6,7 +6,7 @@ HOST = "http://jcssdev.pythonanywhere.com/"
 with open("bugs.csv", "w") as f:
 	next_page = HOST + "bugs"
 	while next_page:
-		csv_writer = csv.writer(f, delimiter=",", quotechar="'")
+		csv_writer = csv.writer(f, delimiter=",", quotechar="'", lineterminator="\n")
 		response = requests.get(next_page)
 
 		json_resp = response.json()
