@@ -1,0 +1,3095 @@
+id,package,status,summary
+1,http://jcssdev.pythonanywhere.com/bugs/43814/,bjori@php.net,Errr. I mean on the gcov.php.net site :)
+2,http://jcssdev.pythonanywhere.com/bugs/43814/,philip@php.net,"I'm unsure if this problem still exists because PECL extensions moved to core are 
+[usually] no longer maintained in PECL, and GCOV only tests core. What do you 
+think?
+
+In related news, the links are changed from lxr/cvs to og/svn in SVN."
+3,http://jcssdev.pythonanywhere.com/bugs/43814/,hannes dot magnusson at gmail dot com,"Currently it seems to only do core stuff, but at the time of that writing phar 
+was in pecl.
+I don't see any pecl extensions there now, but the word is pecl/http will be 
+enabled soonish - and it will then have the same problem :)"
+4,http://jcssdev.pythonanywhere.com/bugs/43814/,philip@php.net,"So extensions that will/may move to core into the future are added? Okay, that 
+makes sense, this shouldn't be too difficult. A fix will likely take place once we 
+get the official OpenGrok box up and running."
+5,http://jcssdev.pythonanywhere.com/bugs/43814/,nlopess@php.net,"I add new extensions on a per-request basis. This problem only shows up if the extension only lives in PECL.
+pecl/http was disabled since it was breaking the build too often, and the authors didn't fix the problem quickly enough. Of course it can be reenabled again if the authors promise they will only commit stuff after (at least) successful compilation."
+6,http://jcssdev.pythonanywhere.com/bugs/43814/,philip@php.net,"Nuno, any suggestions for how to fix this bug? In other words, is the information 
+(which PECL extensions are enabled) available to site.api.php? Can it be?"
+7,http://jcssdev.pythonanywhere.com/bugs/43814/,nlopess@php.net,"The information is not available to the frontend right now.
+A ""simple"" fix is to do a ""svn info"" on each extensions' dir and check if the url matches pecl or not. Or even have a generic scheme that builds the URL from a generic PHP svn path."
+8,http://jcssdev.pythonanywhere.com/bugs/43814/,cmb@php.net,"I think we should decomission gcov.php.net, unless somebody is
+willing to spend time on making it work with recent PHP version.
+The last successful coverage report of PHP 7.4 is from
+2019-05-08[1].
+
+[1] <"
+9,http://jcssdev.pythonanywhere.com/bugs/44278/,ethan dot nelson at ltd dot org,"<?php
+
+ini_set(""display_errors"",""yes"");
+
+$poo = new PDO(""odbc:DEVELOPMENT"");
+
+$query = ""SELECT CAST('asdfasdfasdf' AS nvarchar) AS good, 
+CAST('asdfasdfasdf' AS nvarchar(max)) AS garbled"";
+$stm = $poo->prepare($query);
+echo $query.""<br>\n"";
+
+$id = 1;
+$stm->bindParam(':id',$id,PDO::PARAM_INT);
+$id2 = 1;
+$stm->bindParam(':id2',$id2,PDO::PARAM_INT);
+
+echo ""<pre>\n"";
+if ($stm->execute()) print_r($stm->fetchAll(PDO::FETCH_ASSOC));
+else print_r( $stm->errorInfo());
+echo ""</pre>\n"";
+
+phpinfo();
+
+?>
+
+-----------Results in:
+
+SELECT CAST('asdfasdfasdf' AS nvarchar) AS good, CAST('asdfasdfasdf' 
+AS nvarchar(max)) AS garbled
+Array
+(
+    [0] => Array
+        (
+            [good] => asdfasdfasdf
+            [garbled] => ? ?
+        )
+
+)
+
+PHP Version 5.2.7RC2-dev"
+10,http://jcssdev.pythonanywhere.com/bugs/44278/,jani@php.net,Please try using this CVS snapshot:
+11,http://jcssdev.pythonanywhere.com/bugs/44278/,php-bugs at lists dot php dot net,"No feedback was provided for this bug for over a week, so it is
+being suspended automatically. If you are able to provide the
+information that was originally requested, please do so and change
+the status of the bug back to ""Open""."
+12,http://jcssdev.pythonanywhere.com/bugs/44278/,ethan dot nelson at ltd dot org,"No difference in behavior from what I can see.  Can you reproduce the bug on your end?  My screen reports the following using my reproduce code (with a few lines from the phpinfo command()):
+
+SELECT CAST('asdfasdfasdf' AS nvarchar) AS good, CAST('asdfasdfasdf' AS nvarchar(max)) AS garbled
+
+Array
+(
+    [0] => Array
+        (
+            [good] => asdfasdfasdf
+            [garbled] => &#65533;?[(?[&#65533;&#65533;&#65533;
+        )
+
+)
+
+PHP Logo
+PHP Version 5.2.10-dev
+
+System 	Windows NT LTD-PWWW2 5.2 build 3790
+Build Date 	May 19 2009 11:39:28
+Configure Command 	cscript /nologo configure.js ""--enable-snapshot-build"" ""--enable-debug-pack"" ""--with-snapshot-template=d:\php-sdk\bin\\..\snap_5_2\vc6\x86\template"" ""--with-php-build=d:\php-sdk\bin\\..\snap_5_2\vc6\x86\php_build"" ""--with-pdo-oci=D:\php-sdk\oracle\instantclient10\sdk,shared"" ""--with-oci8=D:\php-sdk\oracle\instantclient10\sdk,shared""
+Server API 	ISAPI"
+13,http://jcssdev.pythonanywhere.com/bugs/44278/,ian at mutexlabs dot com,"I can confirm this bug on Windows 2003, PHP 5.2.7, 5.2.9 and the 5.2.10-dev release linked in this bug.
+
+I'm actually using the odbc_* functions, not PDO, but the behaviour is the same.
+
+I worked around the problem by rebuilding the database using nvarchar(255) instead of nvarchar(max) types - it was safer than modifying the PHP app.
+
+I saw similar (corruption) behaviour on varchar and char types, though I didn't investigate closely.
+
+text columns are OK, but unsuitable for my application."
+14,http://jcssdev.pythonanywhere.com/bugs/44278/,ethan dot nelson at ltd dot org,"The following article is important even though it has to do with 
+encryption.  The bug report exposes what PDO is using to execute 
+queries, sp_prepexec.  The comment from an MS moderator is that it is 
+an unsupported feature.  There may be another choice for use by PDO 
+than prepexec."
+15,http://jcssdev.pythonanywhere.com/bugs/44278/,tidelipop at gmail dot com,"Well, when will this bug be fixed!? I need to use this now!
+/Andreas"
+16,http://jcssdev.pythonanywhere.com/bugs/44278/,tawnos at darkhosts dot org,"Same issue
+PHP: 5.6.1
+OS: Debian/Linux 7.6
+DB: AzureSQL (MSSQL2012)
+Driver: PDO_ODBC / MS ODBC Driver for Linux 11.0
+
+What's more, we have detected that if you have TEXT column anywhere before nvarchar(max) in table, all castings from NVARCHAR(MAX) works as a charm, hovewer TEXT/NTEXT/IMAGE fields are deprecated and are already removed in MSSQL2014, so that's only a hack people with 2k8 and 2k12 databases can use."
+17,http://jcssdev.pythonanywhere.com/bugs/44278/,cmb@php.net,This is a duplicate of
+18,http://jcssdev.pythonanywhere.com/bugs/44278/,chris at ocproducts dot com,"That other bug ticket is closed (I think I know why), and the issue still happens in PHP7.
+
+The issue is caused because of a bad assumption in the code - that only binary or long results require a full SQLGetData call (as opposed to SQLBindCol). In fact, if a vallen of <=0 is returned by reference from SQLBindCol, a SQLGetData will be required because this may mean SQL_NO_TOTAL (-4 value for vallen). This is actually a basic memory safety issue (vallen is used for malloc), so this is worse than just data mangling.
+
+Certainly FreeTDS is for me using a normal VARCHAR result (not LONGVARCHAR) for VARCHAR(MAX). Hence breaking the aforementioned assumption.
+
+I also got a zero value for vallen when running as an Apache module, which I had to treat with SQLGetData too. This is confusing to me, I think it may have something to do with asynchronous execution (this is how ODBC seems to be specified) but I can't find the PHP lib even touching that, so I'm unsure.
+
+I have been able to fix the issue on my machine and am about to attach a patch.
+
+Truth is this code could do with a major refactoring. There is a lot of copy and pasting, and my patch doesn't try and solve that."
+19,http://jcssdev.pythonanywhere.com/bugs/44278/,chris at ocproducts dot com,"On further testing, I found my patch was mostly correct, but insufficient. There is also another manifestation of the bug fixed in #69975, but for varchar(max) rather than nvarchar(max).
+
+I am uploading a new patch that covers this, improves code commenting a bit, fixes a couple of mistakes in my prior patch, and is more defensive in case SQLBindCol never runs.
+
+This resolves my confusion re ""I also got a zero value"", and I now understand the asynchronous execution relates specifically to the behaviour of SQLBindCol binding rows as the cursor advances (previously I thought it was something to do with app responsiveness in the face of DB latency).
+
+This is stable for me now. I got the full Composr CMS test set passing on ODBC using SQL Server Express 2017, with webserver on a Mac using freeTDS. This was a long journey, quite a few issues, notably also my bug filed as #75534."
+20,http://jcssdev.pythonanywhere.com/bugs/44278/,cmb@php.net,"> That other bug ticket is closed
+
+To clarify: the ticket is private."
+21,http://jcssdev.pythonanywhere.com/bugs/44278/,ab@php.net,"@chris at ocproducts dot com, thanks for the patch. Could you also add some tests, please? It concerns both nvarchar and varchar now.
+
+Thanks."
+22,http://jcssdev.pythonanywhere.com/bugs/44278/,chris at ocproducts dot com,"It'd take me a few days to get back into this and to the point of writing working PDO tests, I just don't have that kind of time I'm afraid."
+23,http://jcssdev.pythonanywhere.com/bugs/44278/,ab@php.net,"I see. Naturally bugfixes are checked by the tests, which is also helpful for a review and to ensure future bugfixes don't breach existing behaviors. I was just going through some ODBC related tickets today, so stumbled upon this one. From what is done in the second patch - it is similar to what is going in ext/odbc. The place with the vallen < 0 is however something interesting, namely to know, how the negative length is produced. Perhaps it needs to be done in ext/odbc, too. Anyway, i might check your patch later then and see for tests, as we shouldn't loose the good work. Or perhaps you'll find some time for it.
+
+Thanks."
+24,http://jcssdev.pythonanywhere.com/bugs/44278/,cmb@php.net,"Both attached patches are for ext/odbc, and it seems to me this
+issue has been resolved for ext/pdo_odbc, so I'm changing the
+affected package."
+25,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,"Is there any additional information that I can provide to perhaps 
+speed up the process to resolve this ticket?"
+26,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,"Hello, 
+
+I have confirmed that this issue is in 5.3.0 and 5.2.10."
+27,http://jcssdev.pythonanywhere.com/bugs/47624/,sjoerd@php.net,"Thank you for your bug report.
+
+Could you please supply us with a piece of WSDL describing the array? Also, which client are you using which gives this error?
+
+If I understand correctly, the problem occurs with the soapenc:array type and the Axis 1 SOAP library."
+28,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,The sample WSDL:
+29,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,The script on server side (temp.php):
+30,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,"I have tested this with 5.2.11 and the issue is there as well.  Please 
+let me know if I can provide any additional information that would help 
+resolve this issue.
+
+I cannot upgrade my system and use cool new features in PHP 5.3 as this 
+is blocking a major functionality in the application.
+
+Thanks."
+31,http://jcssdev.pythonanywhere.com/bugs/47624/,akshah123 at hotmail dot com,The problem persists with php 5.3.1 as well.
+32,http://jcssdev.pythonanywhere.com/bugs/47624/,dmitry dot revenko at gmail dot com,Just encountered the same problem. It's a shame this not fixed till now. Don't even know - what should I do with it now.
+33,http://jcssdev.pythonanywhere.com/bugs/47624/,exander77 at gmail dot com,"What the hell is wrong with this project, four years and it is not fixed?"
+34,http://jcssdev.pythonanywhere.com/bugs/47624/,cmb@php.net,"I've made some tests with recent PHP versions (5.6.11 and
+7.0.0beta1). On architectures where a PHP integer is 64bit, the
+argument has type xsd:int in the request envelope. This is clearly
+wrong, as xsd:int is a 32bit integer; it should be xsd:long. Where
+a PHP integer is 32bit, the argument has type xsd:float, what is
+not necessarly wrong per se. So much about the client.
+
+The server obviously can't deal with xsd:float here. On 5.6.11 Win
+x86, the error that has been reported is thrown; on 7.0.0beta1 Win
+x86 PHP crashes.
+
+When the argument is encoded as xsd:int, we see an overflow
+(3916774700) (PHP 7.0.0beta1 on Win x64 and PHP 5.6.11 on Linux
+x64), whereby PHP 5.6.11 additionally raises ""Function
+(""getAssetPathInfo"") is not a valid method for this service)"".
+Only PHP 7 on Linux x64 yields the ""expected"" result.
+
+Related to"
+35,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"Sorry, replace $avatar to $user->avatar from all. Function argument is an object $user, 'avatar' and 'id' is properties."
+36,http://jcssdev.pythonanywhere.com/bugs/47982/,pajoye@php.net,"Thank you for this bug report. To properly diagnose the problem, we
+need a short but complete example script to be able to reproduce
+this bug ourselves. 
+
+A proper reproducing script starts with <?php and ends with ?>,
+is max. 10-20 lines long and does not require any external 
+resources such as databases, etc. If the script requires a 
+database to demonstrate the issue, please make sure it creates 
+all necessary tables, stored procedures etc.
+
+Please avoid embedding huge scripts into the report.
+
+and mysql != PDO"
+37,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"$image = fopen('image.jpg','rb'); 
+$sth->bindValue(':avatar', $image, PDO::PARAM_LOB);
+
+Also not working, but when I remove this code:
+$pdo->exec('SET CHARACTER SET utf8');
+
+then is working in this example.
+Any suggestion?"
+38,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"OK. previous example also working witchout this code:
+$pdo->exec('SET CHARACTER SET utf8');
+
+How use UTF-8 and blob columns?"
+39,http://jcssdev.pythonanywhere.com/bugs/47982/,johannes@php.net,I wasn't able to reproduce the issue. Could you please give me the mysql version (the server version as well as the version of the mysql client library used (see phpinfo() output) and the table defintion of your table. Thanks.
+40,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"Apache 2.2.11
+PHP 5.2.9-1
+MySQL 5.1.31-ommunity
+
+MySQL Client API version 5.0.51a
+PDO Driver for MySQL, client library version 5.0.51a
+
+Table structure:
+
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) CHARACTER SET latin2 NOT NULL,
+  `password` varchar(45) CHARACTER SET latin2 COLLATE latin2_bin NOT NULL,
+  `email` varchar(45) DEFAULT '',
+  `memo` text,
+  `first_name` varchar(45) NOT NULL,
+  `last_name` varchar(45) NOT NULL,
+  `removed` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `locked` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `avatar` blob,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `Index_2` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;"
+41,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"Strange, but when I using another remote database server 5.0.66a everything is good. I thing problem is on my site (bad MySQL or PHP configuration? ;/)."
+42,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,"Sorry once again. Works when
+$pdo->exec('SET CHARACTER SET utf8');
+is commented."
+43,http://jcssdev.pythonanywhere.com/bugs/47982/,johannes@php.net,"I'm not sure I correctly understand your both last messages. Is the problem only dependant on the SET NAMES call or also on the server version?
+
+Thanks for clarification."
+44,http://jcssdev.pythonanywhere.com/bugs/47982/,markac at home dot pl,Only dependant on the SET NAMES.
+45,http://jcssdev.pythonanywhere.com/bugs/47982/,johannes@php.net,Thanks. Got it now reproduced using 5.2 as well as 5.3 (with both libmysql and mysqlnd)
+46,http://jcssdev.pythonanywhere.com/bugs/47982/,uw@php.net,"I don't call this a bug.
+
+PDO::PARAM_LOB ""can be either textual or binary in nature"":
+
+""At some point in your application, you might find that you need to store ""large"" data in your database. Large typically means ""around 4kb or more"", although some databases can happily handle up to 32kb before data becomes ""large"". Large objects can be either textual or binary in nature. PDO allows you to work with this large data type by using the PDO::PARAM_LOB  type code in your PDOStatement::bindParam() or PDOStatement::bindColumn() calls. PDO::PARAM_LOB tells PDO to map the data as a stream, so that you can manipulate it using the PHP Streams API."","
+47,http://jcssdev.pythonanywhere.com/bugs/47982/,uw@php.net,Not a MySQL specific issue. PDO general/PDO specification issue.
+48,http://jcssdev.pythonanywhere.com/bugs/47982/,cmb@php.net,"> A proper fix would be to introduce PDO::PARAM_BLOB for use with
+> binary data. PDO::PARAM_BLOB should go into the PDO core.
+
+So this is apparently a PDO Core issue."
+49,http://jcssdev.pythonanywhere.com/bugs/49106/,minfrin at sharp dot fm,"The httpd mod_cache is designed to work as a self contained cache that bolts onto the front of the server (or with httpd v2.3+, can be inserted anywhere in the httpd filter stack for more targeted caching).
+
+In theory, php shouldn't be touching any of the cache fields in request_rec at all, nor should php be trying to obscure any HTTP headers if it detects caching has been enabled.
+
+It should be possible for a php script to support conditional requests, in other words php should be able to detect the If-None-Match header and respond with 200 OK or 304 Not Modified as appropriate.
+
+Does anyone know what problem was being solved that made php want to care as to whether mod_cache was present?"
+50,http://jcssdev.pythonanywhere.com/bugs/49106/,rasmus@php.net,"I have been looking at this code a bit this morning.  It does indeed 
+look like the no_local_copy is not needed here since both Last-Modified 
+and ETag that may be present prior to PHP being executed are removed.
+
+And to minfrin, I think PHP does need to remove any ETag or Last-
+Modified headers that are generated prior to PHP execution.  It simply 
+makes no sense for Apache to generate an ETag for a request prior to 
+PHP executing on that request.  How could that possibly be valid?"
+51,http://jcssdev.pythonanywhere.com/bugs/49106/,n dot sherlock at gmail dot com,"minfrin, the caching headers ETag and Last-Modified are added by Apache before PHP gets to run, and whether mod_cache is turned on or not. They aren't mod_cache specific."
+52,http://jcssdev.pythonanywhere.com/bugs/49169/,jeroen at asystance dot nl,The correct link to the test case is
+53,http://jcssdev.pythonanywhere.com/bugs/49169/,robin dot harvey at chaptereight dot com,"Hi,
+
+This bug is affecting me too, and I've noticed that it's only the input parameters which trigger the bug - 2 functions can have the same output and they are treated individually.
+
+Also, it seems that it's the order of the wsdl:binding/wsdl:operation declarations which makes a difference, swapping the wsdl:portType/wsdl:operation or wsdl:message ordering does not trigger the bug.
+
+HTH
+--Robin"
+54,http://jcssdev.pythonanywhere.com/bugs/49169/,sjoerd@php.net,"Could reproduce. Even though the soap action looked as follows:
+SOAPAction: ""operation2""
+Operation 1 was called."
+55,http://jcssdev.pythonanywhere.com/bugs/49169/,bigdan at gmail dot com?,"Is anyone aware of a workaround? I am having this issue on Ubuntu Hardy.
+
+Thanks"
+56,http://jcssdev.pythonanywhere.com/bugs/49169/,bigdan at gmail dot com,"Nevermind on the workaround - either this is not a bug, this issue was noticed well before this bug, or the comments here are entirely unrelated though they correct the issue for me:"
+57,http://jcssdev.pythonanywhere.com/bugs/49169/,jeroen at asystance dot nl,"bigdan, I think you left out one option: this _is_ a bug.
+
+Using RPC style _is_ a workaround, but one that doesn't always work.
+
+The real problem is that SOAP should use the SOAPAction header to determine which operation to call, not guess based on parameters (which is what it looks to be doing now).
+
+While the comment you refer to does point out this very issue and predates this bug, that doesn't mean it's not a bug. Rather the commenter could (and should?) have filed this as a bug more than a year ago."
+58,http://jcssdev.pythonanywhere.com/bugs/49169/,robin dot harvey at chaptereight dot com,"@bigdan at gmail dot com
+
+The workaround I'm using is to set up my WSDL so that all methods have a unique input type signature.  Of course this leads to an ugly and unnecessarily bloated WSDL, but there's not much other choice (other than WS02 PHP, that is....)"
+59,http://jcssdev.pythonanywhere.com/bugs/49169/,wee at xbe dot ch,"this bug is really annoying.. the forced use of rpc (the ""workaround"") is not a serious fix.
+
+we also evaluated wso2 (wsf_php) as the php soapserver simply isn't that business ready, but that too has it's issues (has problems when it comes to generate complex wsdl and with complex type handling on the php side). and it segfaults with an activated zend optimizer+ ;-)
+
+anyway, i just comment to give more importance to this bug."
+60,http://jcssdev.pythonanywhere.com/bugs/49169/,spyowl at gmail dot com,"Confirmed on 5.3.1RC3 using WSDL.
+
+The problem seems to be the matching first argument name between methods (not the whole signature) - as long as 2 or more methods have the same name for the first argument the SoapServer will always execute the first method listed, regardless of soapAction, and even if there are additional arguments for those methods that are different from each other.
+
+This is a pretty serious bug."
+61,http://jcssdev.pythonanywhere.com/bugs/49169/,rkm at nykredit dot dk,"It's not even enough to change the message name (I didn't get that from the initial comments) - One needs to change the element of the part.
+
+Thus
+<wsdl:message name=""getByIdRequest"">
+  <wsdl:part name=""parameters"" element=""tmp:ClientId""/>
+</wsdl:message>
+
+Will not work with (reusing tmp:ClientId):
+<wsdl:message name=""getByIdRequest2"">
+  <wsdl:part name=""parameters"" element=""tmp:ClientId""/>
+</wsdl:message>
+
+You'll have to create a new element, wich makes it hard to use i a corporate environment, where you have to use standard elemnts - Thus this is not a valid option, even though it works:
+<wsdl:message name=""getByIdRequest2"">
+  <wsdl:part name=""parameters"" element=""tmp:ClientId_Clone""/>
+</wsdl:message>
+
+This bug has been here for a while, any movement against a solution?
+
+So far I have to create a WSDL for each operation, which is not very PHP-smooth!"
+62,http://jcssdev.pythonanywhere.com/bugs/49169/,rkm at nykredit dot dk,"Adding to the above comment - If first SoapServer fails to read your WSDL properly, it will end up calling all known methods of the object added to SoapServer.
+- By ""known"" I mean, that if the .wsdl describes *another* binding to *another* method, than the one called - The other method gets called as well, and the result added to the <SOAP-ENV:Header> tag in the return."
+63,http://jcssdev.pythonanywhere.com/bugs/49169/,hoffmeister dot c at gmx dot de,"This is no bug. I guess you used style=""document"" in the wsdl file operation description. In this case there is no operation name passed from the client to the server. Try style=""rpc"" (remote procedure call) instead. That works pretty well."
+64,http://jcssdev.pythonanywhere.com/bugs/49169/,rkm at nykredit dot dk,"Well, maybe the RPC-protocol will work, but where I work, it is mandatory to create services using style=""document"", and it really isn't to the advantage of PHP to tell the servicepeople in the Java dept. that we can't handle ""document"" styles.
+
+Actually I circumvented the problem, by putting all the message definitions in separate files, which I then include in the schema-part of the wsdl.
+Then PHP can handle the soap:binding style=""document"" just fine, so the problem only occurs if the names are duplicated within the same file."
+65,http://jcssdev.pythonanywhere.com/bugs/49169/,jeroen at asystance dot nl,Just wanted to verify this bug is still present in 5.3.3
+66,http://jcssdev.pythonanywhere.com/bugs/49169/,mrice at canarylabs dot com,"This bug appears to still be present in 5.3.6.
+
+I need help on how to use the workaround of: “Actually I circumvented the 
+problem, by putting all the message definitions in separate files, which I then 
+include in the schema-part of the wsdl.
+Then PHP can handle the soap:binding style=""document"" just fine, so the problem 
+only occurs if the names are duplicated within the same file.”
+
+We are recreating a web service from an already existing one and existing 
+clients need to work.
+
+How do you include the message definitions in separate files as stated above?"
+67,http://jcssdev.pythonanywhere.com/bugs/49169/,reto at casserini dot com,"Another workaround. 
+
+Instead of
+
+    <message name=""getCourses"">
+        <part name=""parameters"" type=""xsd:int""/>
+    </message>
+    <message name=""getUsers"">
+        <part name=""parameters"" type=""xsd:int""/>
+    </message>
+
+which always leads to a call of the first operation ""getCourses"", I define two new types:
+
+    <xsd:element name=""getCoursesInput"" type=""xsd:int""/>
+    <xsd:element name=""getUsersInput"" type=""xsd:int""/>
+
+and use them for the messages:
+
+    <message name=""getCourses"">
+        <part name=""parameters"" element=""tns:getCoursesInput""/>
+    </message>
+    <message name=""getUsers"">
+        <part name=""parameters"" element=""tns:getUsersInput""/>
+    </message>
+
+works fine for me."
+68,http://jcssdev.pythonanywhere.com/bugs/49169/,php dot net at exby dot com,"I still can't believe this is not fixed. Can we get someone from php.net to respond to this - whether or not there is any intention to fix this?? I really don't want to use JAVA for setting up services 
+but so far PHP's inability to correctly understand the soapaction header is forcing me in this direction.
+
+And no, I can't switch to rpc/encoded and it's not a 'fix'. Document Literal is by far the more used paradigm outside of the PHP world - and web services are often implemented in the Enterprise space.
+
+Please, somebody fix this."
+69,http://jcssdev.pythonanywhere.com/bugs/49169/,ben at redsnapper dot net,Still not fixed. Extremely annoying.
+70,http://jcssdev.pythonanywhere.com/bugs/49169/,mail at mailforspam dot com,7 years... I really hate you core team.
+71,http://jcssdev.pythonanywhere.com/bugs/49169/,mwintoch at wp dot pl,"This issue still exists on PHP 7.2, even with Zend\Soap 2.7"
+72,http://jcssdev.pythonanywhere.com/bugs/49169/,requinix@php.net,OP's link is no good anymore and I know very little of SOAP. Does someone have a client+server+WSDL example I can test with?
+73,http://jcssdev.pythonanywhere.com/bugs/49270/,felipe@php.net,"This patch isn't enough to get PHP building. It just fix the PDO part, but there are other issues yet."
+74,http://jcssdev.pythonanywhere.com/bugs/49270/,kassner@php.net,I created a simple pull request that I think solves this bug:
+75,http://jcssdev.pythonanywhere.com/bugs/49270/,ejrx7753 at gmail dot com,"Experienced this on OS X. It is a general Linux issue, not fixed in 7. In reply to the suggested pull request, I think it is a bad idea. All that is needed is to output a proper warning if spaces are used. There are too many incompatibilities to attempt to fix."
+76,http://jcssdev.pythonanywhere.com/bugs/49874/,Sjoerd@php.net,"Thank you for your bug report. Does your test.csv file start with a BOM? You can determine this by viewing the file in a hex editor. If it starts with fffe or feff, it has a BOM (byte order mark)."
+77,http://jcssdev.pythonanywhere.com/bugs/49874/,jketterl at chipxonio dot de,"thanks for having a look
+
+i tried with and without. the challenge is to get it working without, because that's the worst case my app has to deal with, but the BOM doesn't seem to solve this.
+
+$ hexdump test-with-bom.csv
+0000000 feff 004c 0069 006e 0065 0020 0030 0031
+0000010 000a 004c 0069 006e 0065 0020 0030 0032
+0000020 000a 004c 0069 006e 0065 0020 0030 0033
+0000030 000a 004c 0069 006e 0065 0020 0030 0034
+0000040 000a
+0000042
+
+$ php test.php
+string(8) ""Line 01
+""
+string(8) ""Line 02
+""
+string(8) ""Line 01
+""
+string(5) ""e 01
+""
+
+i also tried opening the file including the BOM without a stream filter, but that just resulted in php reading in two extra chars (the BOM converted in some way i guess) on the beginning of the first line.
+
+i thought i'd attach the sample files to this bug, but it seems like i can't. i've uploaded them here instead:"
+78,http://jcssdev.pythonanywhere.com/bugs/49874/,yohgaki@php.net,"It seems 5.5 has this problem still
+
+string(8) ""Line 01
+""
+string(8) ""Line 02
+""
+string(8) ""Line 01
+""
+string(5) ""e 01
+""
+[yohgaki@dev php-5.4]$ php -v
+PHP 5.5.4 (cli) (built: Sep 19 2013 13:06:40)"
+79,http://jcssdev.pythonanywhere.com/bugs/49874/,paul dot smith at deepseaplc dot com,"I'm also having this problem with the zlib.deflate filter in PHP 5.6.20.
+
+I attempted to append a user filter after zlib.deflate with the intention of totalling the datalen of the buckets. The filter() function is called but stream_bucket_make_writeable($in) returns null. I suspect this is related to the ftell problem."
+80,http://jcssdev.pythonanywhere.com/bugs/49874/,php at bohwaz dot net,"Same issue with zlib:
+
+<?php
+
+$fh = fopen('php://temp', 'w+');
+
+fwrite($fh, '123');
+var_dump(ftell($fh));
+
+stream_filter_append($fh, 'zlib.deflate', STREAM_FILTER_WRITE, 9);
+
+fwrite($fh, 'abc');
+
+var_dump(ftell($fh));
+
+fseek($fh, 0);
+var_dump(fread($fh, 1024));
+
+fclose($fh);
+
+?>
+
+Will return:
+
+int(3)
+int(3)
+string(3) ""123""
+
+See:"
+81,http://jcssdev.pythonanywhere.com/bugs/49874/,phofstetter at sensational dot ch,"This is an inherent problem with all filters that keep internal state (which is probably all but the simplest): There's no way a filter can learn about seeking on the underlying stream and thus it can't reset its internal state.
+
+It's a tricky problem though: For any seek() but a seek() going to the beginning of the stream, it's pretty much impossible to correctly rebuild the internal filter state after seeking on the stream.
+
+I think what should happen in order to save other people the trouble in the future is to mark streams with filters attached as non-seekable."
+82,http://jcssdev.pythonanywhere.com/bugs/50293/,pajoye@php.net,"I think the case is clear, it looks like we do not use VCWD or php stream's api and it fails to get the actual CWD.
+
+I will take a look at it asap."
+83,http://jcssdev.pythonanywhere.com/bugs/50293/,kalle@php.net,"I added a roughly untested patch for this, as I have some issues getting openssl to work in my build env, so the patch is more a theory of how it could be fixed."
+84,http://jcssdev.pythonanywhere.com/bugs/50293/,cmb@php.net,"I think full stream support is out of scope for any of the stable
+versions (and there is already"
+85,http://jcssdev.pythonanywhere.com/bugs/50892/,jani@php.net,"RTFM:
+
+""Members declared protected can be accessed only within the class itself and by inherited and parent classes."""
+86,http://jcssdev.pythonanywhere.com/bugs/50892/,EdwardDrapkin at gmail dot com,"I did ""RTFM"" and I understand that protected members are not SUPPOSED TO BE ABLE to be accessed from anything but ""within the class itself and by inherited and parent classes.""  The bug is that, when the calling scope resolves and LOOKS LIKE the correct scope because it is an inherited class, but is a _different inherited class_ of the same parent object in which the protected member was declared, the engine allows access to protected members from OUTSIDE THE CLASS.
+
+In the example, both ""bar"" and ""kid"" extend foo, but ""kid"" should NOT have access to bar's protected members, but it does, but its resolving scope looks similar to the correct scope that would need to resolve.
+
+This isn't an RTFM issue, it's a legitimate bug.  Did you read the reproduce code?"
+87,http://jcssdev.pythonanywhere.com/bugs/50892/,colder@php.net,"Even though it feels odd, it's how the checks are currently designed.
+
+The same applies to i.e. Java. I guess we cannot change things here 
+without introducing nasty and hard to track BC breaks."
+88,http://jcssdev.pythonanywhere.com/bugs/50892/,johannes@php.net,That's a fundamental part of a class based inheritance system.Changing this won't only affect BC but also the fundamental design.
+89,http://jcssdev.pythonanywhere.com/bugs/50892/,colder@php.net,"At a second glance, it really looks like it is wrong.
+
+The visibility check should also be based on the object from which the 
+properties are read.
+
+As for my ""it works that way in Java"" argument, it contradicts the java 
+specifications:"
+90,http://jcssdev.pythonanywhere.com/bugs/50892/,php at b8r dot org,"It causes more problems then the original poster notes.  We've run into problems using __get and __set. Since php see's the member as ""in scope"" for both classes, the __get and __set methods don't get called."
+91,http://jcssdev.pythonanywhere.com/bugs/50892/,php at b8r dot org,"Our problem differs slightly from this issue, but I think they share a root cause.  Here's a sample of code with the expected outcome.
+abstract class A {
+    /**
+     * undocumented function
+     *
+     * @return void
+     */
+    public function __get($propertyName)
+    {
+        $val = $this->$propertyName;
+        echo ""Current Value of '{$propertyName}' is '{$val}'\n"";
+        return $val;
+    }
+    
+    public function __set($propertyName, $propertyValue)
+    {
+        echo ""Setting Property '{$propertyName}'  to '{$propertyValue}'\n"";
+        $this->$propertyName = $propertyValue;
+    }
+}
+
+class B extends A {
+    protected $name;
+    
+    public function populateName($val) {
+        $a = 'name';
+        $this->$a = $val;
+    }
+    
+    public function testit() {
+        $b = new B();
+        $b->name = 'internal';
+        $b->name;
+    }
+}
+
+$two = new B();
+$two->name = 'external';
+$two->name;
+
+$two->testit();
+
+Expected Results:
+-----------------
+Setting Property 'name'  to 'external'
+Current Value of 'name' is 'external'
+Setting Property 'name'  to 'internal'
+Current Value of 'name' is 'internal'
+
+Actual Results:
+----------------
+Setting Property 'name'  to 'external'
+Current Value of 'name' is 'external'"
+92,http://jcssdev.pythonanywhere.com/bugs/50892/,normandiggs at gmail dot com,"Another one example, even without ""extends"":
+
+class Page_Element
+{
+        protected $name = 'name*';
+
+        public function __construct(Page_Element $child = null)
+        {
+            echo $this->name;
+            echo $child->name;
+        }
+
+}
+
+new Page_Element(new Page_Element(null));
+
+(from"
+93,http://jcssdev.pythonanywhere.com/bugs/50892/,arth dot inbox at gmail dot com,"normandiggs, your sample is irrelevant.
+It's ok to access private and protected properties from same type object.
+It's bad to access protected properties from different type object.
+
+Why I hate this behavior:"
+94,http://jcssdev.pythonanywhere.com/bugs/50892/,cmb@php.net,"| There is no design ground to accept that, it is a bug. The
+| question that remains is: is it worth to fix BC-wise?
+
+IMHO the question is rather: when is the BC break acceptable? 7.1
+or 8.0?"
+95,http://jcssdev.pythonanywhere.com/bugs/50892/,mail at pmmaga dot net,A PR was prepared to fix this on the current master (7.2) but it was decided the the potential BC break could possibly be too much for a minor and it was suggested that it should wait for the next major.
+96,http://jcssdev.pythonanywhere.com/bugs/50892/,rowan dot collins at gmail dot com,"This may seem odd, but is actually perfectly reasonable if you consider polymorphism:
+
+- Access is class-based, not instance-based: you can call private members of a different instance of the same class.
+- For the same reason, you can access protected members on an instance of a parent class.
+- If you ask for an instance of class A, you may at run-time actually receive an instance of some sub-class of A.
+- So, if classes B1 and B2 both inherit from A, a method on class B1 might ask for an instance of A, and be given an instance of B2; when it calls a method on that instance, it's the definition in B2 which will be accessed.
+
+Here's a concrete example:"
+97,http://jcssdev.pythonanywhere.com/bugs/50892/,rowan dot collins at gmail dot com,"Sorry, slight mistake in my example: to be equivalent to this report, the Subclass::add(ParentClass $other) method should be declared on one of the child classes. But it still works in both languages:"
+98,http://jcssdev.pythonanywhere.com/bugs/50892/,arth dot inbox at gmail dot com,"We should not to stand on other language behavior.
+
+One more time:"
+99,http://jcssdev.pythonanywhere.com/bugs/50892/,giovanni at giacobbi dot net,"I agree with arth dot inbox at gmail dot com, the original bug report is wrong but this actually should be filed as a new bug imho:
+
+Reproduce code:
+---------------
+class C {
+  protected $x = 10;
+}
+class D extends C {
+  public function m(C $c) {
+    print ""x="" . $c->x . ""\n"";
+  }
+}
+class E extends C {
+  protected $x = 20;
+}
+$d = new D();
+$e = new E();
+$d->m($d);
+$d->m($e);
+
+Expected result:
+----------------
+x=10
+x=10      /* note 10, NOT 20! */
+
+Actual result:
+--------------
+x=10
+PHP Fatal error:  Uncaught Error: Cannot access protected property E::$x in Standard input code:9
+Stack trace:
+#0 Standard input code(21): D->m(Object(E))
+#1 {main}
+  thrown in Standard input code on line 9"
+100,http://jcssdev.pythonanywhere.com/bugs/50892/,rowan dot collins at gmail dot com,>
+101,http://jcssdev.pythonanywhere.com/bugs/50892/,rowan dot collins at gmail dot com,"@giovanni:
+
+Why would the expected behaviour there be to print 10? Re-declaring a property doesn't create a second property with the same name, it changes it polymorphically just like re-declaring a method does. Either the method can see the value 10, or it cannot see any value.
+
+class C {
+  protected $x = 10;
+  public function m() {
+    print ""x="" . $this->x . ""\n"";
+  }
+}
+class D extends C {
+  protected $x = 20;
+}
+$d = new D();
+$d->m(); // ""x=20"""
+102,http://jcssdev.pythonanywhere.com/bugs/51056/,jani@php.net,Isn't this same (or related) as
+103,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,This report looks a bit like
+104,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"Confirmed with PHP_5_3
+
+Testing PHP version: 5.3.3-dev
+fread took 0.07ms to read 8 bytes
+fread took 5.06ms to read 256 bytes
+fread took 1000.10ms to read 53 bytes
+fread took 5.03ms to read 256 bytes
+fread took 1000.11ms to read 53 bytes
+fread took 5.04ms to read 256 bytes
+fread took 1000.10ms to read 53 bytes
+
+I'll need a bit more time for PHP_5_2 as flex-2.5.4 is becoming more 
+difficult to find."
+105,http://jcssdev.pythonanywhere.com/bugs/51056/,felipe@php.net,"Testing PHP version: 5.2.13RC3-dev
+fread took 0.04ms to read 8 bytes
+fread took 4.88ms to read 256 bytes
+fread took 1000.04ms to read 53 bytes
+fread took 4.96ms to read 256 bytes
+fread took 1000.06ms to read 53 bytes
+fread took 4.97ms to read 256 bytes
+fread took 1000.06ms to read 53 bytes
+(etc)"
+106,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"I tried to switch to non-blocking mode. This solves this issue with 
+most sockets, except for SSL sockets when transmitting a lot of data.
+
+This bug is blocking in my case (socket communication transmitting a 
+lot of data)."
+107,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"While for file sockets it makes sense when reading data to make sure a 
+buffer gets completly filled until EOF is reached, this is not true 
+for sockets.
+
+There is already a condition for ""greedy read"", but it does not apply 
+when we first restore data from the read buffer.
+
+Here is a diff (PHP_5_3) that solves the issue:
+
+Index: main/streams/streams.c
+===================================================================
+--- main/streams/streams.c	(r?vision 295152)
++++ main/streams/streams.c	(copie de travail)
+@@ -592,6 +592,10 @@
+ 			size -= toread;
+ 			buf += toread;
+ 			didread += toread;
++
++			/* avoid trying to read if we already have 
+data to pass */
++			if (stream->wrapper != 
+&php_plain_files_wrapper)
++				break;
+ 		}
+ 
+ 		/* ignore eof here; the underlying state might have 
+changed */
+
+
+Test script output:
+
+Testing PHP version: 5.3.3-dev
+fread took 0.07ms to read 8 bytes
+fread took 5.07ms to read 256 bytes
+fread took 0.00ms to read 45 bytes
+fread took 1000.11ms to read 8 bytes
+fread took 5.02ms to read 256 bytes
+fread took 0.00ms to read 45 bytes
+fread took 1000.13ms to read 8 bytes
+fread took 5.04ms to read 256 bytes"
+108,http://jcssdev.pythonanywhere.com/bugs/51056/,jani@php.net,"btw. If you really want someone to do something about this, post the patch to internals@lists.php.net as well. :)"
+109,http://jcssdev.pythonanywhere.com/bugs/51056/,lbarnaud@php.net,"Hi,
+
+I made a test case for this ( 51056.phpt.txt )
+
+fread() in C has exactly the same behavior, it will block if you try to read more bytes than available.
+
+Your patch correctly avoids this, however it introduces an other issue: fread() will return less data than asked for, even if enough data is available ( 51056-2.phpt.txt )."
+110,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"Hi,
+
+I know about fread() returning less data than asked for, however I could not 
+modify this behaviour without passing some kind of value to lower-level read 
+operation, which will call poll() if socket is blocking.
+When data is already available in buffer, an information should be passed to the 
+lower-level read() to let it know it should not block.
+
+The only non-intrusive solution to fix this would be to temporarly pass socket 
+in non-blocking mode if data was found in PHP buffer.
+
+Considering any application handling data from network should handle cases when 
+received data is not complete, I believe it was best to return immediatly if 
+data is found and let the application call fread() again rather than trying to 
+workaround this problem with a dirty solution like passing temporarly in non-
+blocking mode.
+Another solution would be to add an argument to the internal read call (""do not 
+block"") however it would change the API for the internal stream api, and would 
+require the argument to be handled into each stream wrapper."
+111,http://jcssdev.pythonanywhere.com/bugs/51056/,lbarnaud@php.net,"> When data is already available in buffer, an information should be passed to the lower-level read() to let it know it should not block.
+
+This will block anyway when the buffer is empty and you won't be able to known when it is empty, so you can't rely on this (sometimes it will block, sometimes not).
+
+Also, some applications may rely on the blocking and will break if it is changed. This behavior exists since at least PHP 5.1.
+
+> Considering any application handling data from network should handle cases when received data is not complete
+
+As this is not the normal case I would suggest to introduce some timeout handling (this is what applications like e.g. Apache does, I guess), or fixing what prevents you from using non blocking i/o with SSL streams instead."
+112,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"> This will block anyway when the buffer is empty and you won't be able to known 
+when it is empty, so you can't rely on this (sometimes it will block, sometimes 
+not).
+
+PHP always calls poll() before read, so it knows if there is nothing to read. 
+stream_select() will return the socket as ""ready"" if there is data pending in 
+php buffer (even if there's no data on the socket), just so we can read it.
+
+> Also, some applications may rely on the blocking and will break if it is 
+changed. This behavior exists since at least PHP 5.1.
+
+fread() manual explicitly warns about this:
+
+When reading from anything that is not a regular local file, such as streams 
+returned when reading remote files or from popen() and fsockopen(), reading will 
+stop after a packet is available. This means that you should collect the data 
+together in chunks as shown in the examples below.
+
+On the contrary, using blocking streams together with stream_select() may lead 
+to async program blocking because stream_select() saw there was pending data, 
+but a new packet will not arrive anytime soon.
+
+> As this is not the normal case I would suggest to introduce some timeout 
+handling (this is what applications like e.g. Apache does, I guess), or fixing 
+what prevents you from using non blocking i/o with SSL streams instead.
+
+It is the normal case to receive less than expected data as documented on the 
+php manual.
+Apache (or any correctly coded networking app) does not uses timeouts (except to 
+detect dead clients), instead it uses read() which is reliable (ie. not hang 
+when there is data that can be returned).
+
+By the way I have looked at what causes the problem I have with SSL streams, and 
+it could be worked around by switching the streamd between blocking mode and 
+non-blocking mode depending on the situation, however I would prefer to avoid 
+that (and it doesn't change the fact that fread() does not comply with what is 
+expected from it, both from read() syscall behaviour and php's manual)"
+113,http://jcssdev.pythonanywhere.com/bugs/51056/,lbarnaud@php.net,"> Apache [...] uses timeouts [...] to detect dead clients
+
+This is what I was meaning :) (and I though you was meaning this too : ""application handling data from network should handle cases when received data is not complete"")
+
+Dead clients, or situations like this are not the ""normal case"", and sometimes this can be handled with timeouts.
+
+If you are in situations where this is the normal case, one solution is to use non blocking streams.
+
+The following code does exactly what you are asking for (if there is something to read, return it; else, block) :
+
+stream_set_blocking(..., 0);
+while (stream_select(...)) {
+  $data = fread(...);
+}
+
+If it does not works with SSL streams, then SSL stuff should be fixed instead."
+114,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"I still believe fread() should not hang when it has data it can return. The C 
+counterpart doesn't, and the manual says it doesn't.
+
+Regarding test 51056-2.phpt.txt the manual explicitly says that this *can 
+happen* on anything else than files (read warning in example #3 on"
+115,http://jcssdev.pythonanywhere.com/bugs/51056/,lbarnaud@php.net,"> I still believe fread() should not hang when it has data it can return.
+
+It follows fread() behavior since years and I believe it should not change.
+
+> The C counterpart doesn't
+
+C's fread() does :)
+
+> and the manual says it doesn't.
+
+The manual looks wrong on this point, ""reading will stop after a packet is available"" is never true, whatever packet means.
+
+fread() (both PHP's and C's) returns less data than asked only on EOF or errors.
+
+The only reliable way of doing non-blocking i/o is still to use non-blocking streams ;-)"
+116,http://jcssdev.pythonanywhere.com/bugs/51056/,magicaltux@php.net,"So, it is normal for php's fread() to return immediatly when less data than asked is available, unless this data arrived while a previous call of fread() was done and there was 
+too much data ?
+
+Let me just state that this doesn't makes sense.
+
+I tested stdc's fread() and could confirm that its behaviour is consistent: it will only return when it has collected the data it needed, when EOF is reached or when an error 
+occurs.
+
+It seems that PHP's php_stream_read() is closer to read() syscall than to stdc's fread(), except for this one specific behaviour.
+
+> It follows fread() behavior since years and I believe it should not change.
+
+I believe the problem comes from the new streams api which is an attempt to make the socket api obsolete. In fact stream functions (including fread()) behave the same way the 
+old socket counterpart did when passed a socket.
+
+The correct behaviour (as defined by common sense, and confirmed by PHP 4.4.9) :
+
+Testing PHP version: 4.4.9
+socket_read took 0.06ms to read 8 bytes
+socket_read took 5.08ms to read 256 bytes
+socket_read took 0.01ms to read 45 bytes
+socket_read took 0.08ms to read 8 bytes
+socket_read took 5.06ms to read 256 bytes
+socket_read took 0.01ms to read 45 bytes
+socket_read took 0.07ms to read 8 bytes
+socket_read took 5.05ms to read 256 bytes
+socket_read took 0.01ms to read 45 bytes
+socket_read took 0.08ms to read 8 bytes
+
+Testing with PHP 5.1.0 (first version containing stream_socket_pair()) exhibits a change of behaviour due to the new stream api.
+
+Both tests 51056.phpt and 51056-2.phpt pass on PHP 4.4.9.
+
+By the way using nonblocking mode makes no sense with provided example. It would just make the program use 100% cpu. For example a PHP program reading an email from a POP3 
+server might lockdown because of this bug in blocking mode. If end of email is reached while a read is in progress and a new read is called, it will block until the server 
+closes connections (expected behaviour = return remaining data).
+
+As a PHP sockets programmer (I believe my experience when it comes to php and sockets is not negligeable) I say once more that *this* fread()'s behaviour is not consistent. 
+fread() in blocking mode should block until it has enough bytes or return as soon as some bytes are avaialble. Blocking should not depend on when data has arrived."
+117,http://jcssdev.pythonanywhere.com/bugs/51056/,lbarnaud@php.net,"I see your point in wanting read() behavior. Whether or not to implement fread() or read() one is arguable. However the specific behavior you are asking for is not reliable for several reasons, and IMHO (I may be wrong) you want this behavior for bad reasons. Let me explain this :
+
+> By the way using nonblocking mode makes no sense with provided example. It would just make the program use 100% cpu.
+
+This is why you don't want to use non-blocking streams. If you use stream_select() you will never end up using 100% CPU : Your PHP process will only do an idle wait in stream_select() and consume no CPU at all.
+
+Example :
+
+stream_set_blocking($stream, 0);
+while (stream_select($r,$w,$e, $stream, $sec, $usec)) { /* block until data is available for read and/or write in $stream. */
+  $data = fread($stream, 8192); /* read all available data, up to 8192 bytes. Returns only 1 byte if only 1 byte is available and never blocks. */
+}
+
+
+> If end of email is reached while a read is in progress and a new read is called, it will block until the server closes connections
+
+With your patch (or with the read behavior you want) it will still block. And it will block randomly, in an unpredictable manner.
+
+Please see the following example :
+
+Say the buffer has 250 bytes in it.
+fread(100) -> buffer.length-=100, buffer.length == 100
+fread(100) -> buffer.length-=100, buffer.length == 50
+fread(100) -> with your patch it would return the last 50 available bytes
+
+Now this other example with a buffer with only 200 bytes in it :
+
+Say the buffer has 200 bytes in it.
+fread(100) -> buffer.length-=100, buffer.length == 100
+fread(100) -> buffer.mength-=100, buffer.length == 0
+fread(100) -> buffer is 0, this blocks, and you can't control this (you don't control the buffer, and don't know anything about it in a php script)
+
+Please see 51056-3.phpt.
+
+With current behavior it will block too, but in a predictable maner."
+118,http://jcssdev.pythonanywhere.com/bugs/51056/,cataphract@php.net,"The bug reported in right on this issue.
+
+As it stands, it is completely unpredictable whether an fread call will block.
+
+The point of putting a stream into the readfs set of stream_select is to know whether a call to fread will block or not. stream_select has an emultaion feature that returns the stream if the stream buffer has data, even if there's no more data to be read on the socket. See"
+119,http://jcssdev.pythonanywhere.com/bugs/51056/,cataphract@php.net,"A small correction: it's not that ""never reads from the socket more than one packet at a time"" as I and the manual say. It's that it does only one call to recv().
+
+If we're blocking waiting for data and a packet arrives, then recv() will return only the contents of that packet (""The receive calls normally return any data available, up to the requested amount, rather than waiting for receipt of the full amount requested.""). However, if several packets have been received since the last call to fread, recv() will return the most data it can, possibly several packets.
+
+But this is a minor documentation issue and not very relevant in this discussion."
+120,http://jcssdev.pythonanywhere.com/bugs/51983/,sergo_s at bk dot ru,"I met problem ""No input file specified"" in the configuration of lighttpd 1.4.26 + php-5.3.2 + fastcgi/php-fpm when requesting addresses like index.php/myMethod/ (kohanaframework based site). I found that $_SERVER[PATH_INFO] is NULL.
+(More about my problem in this post:"
+121,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,Have you tried your patch with other webservers than nginx and lighttpd ?
+122,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"99% of fpm installations are with nginx or lighty, using fpm sapi with non-FSM 
+webservers is at least very strange. But I have just checked it with 
+Apache+mod_fastcgi in a simplest configuration:
+
+DocumentRoot ""/var/www""
+FastCgiExternalServer /var/www -socket /tmp/php-fpm.sock
+<Directory /var/www>
+    Options FollowSymLinks +ExecCGI
+    AllowOverride   All
+    Order           Allow,Deny
+    Allow           from all
+</Directory>
+
+and it works OK.
+
+The patch contains comments in the top of the new init_request_info() 
+implementation. It describes why fastcgi parameters are mapped to the script 
+filename in this way, and it was chosen after examining CGI specs, typical fpm 
+configurations, and common sense.
+
+BTW, those webservers like old IIS versions with buggy cgi implementations which 
+required that awkward way of guessing what they meant, for which the original 
+implementation of init_request_info() was designed, do not support remote 
+FastCGI at all."
+123,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"I'm asking about Apache, to be certain not to ban some webservers from using 
+FPM.
+
+According to"
+124,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"FPM sapi implements remote fastcgi only (also known as ""external FastCGI"").
+So it is limited to web servers which support it.
+
+I have tested Nginx, Lighttpd, and Apache mod_fastcgi.
+
+For other webservers listed, are there ones which of them support remote 
+fastcgi? At least I am sure that IIS does not (even with its latest fastcgi 
+implementations, I've asked this question on IIS FastCGI forums). As far as I 
+know, thttpd does not, too."
+125,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"And of course I never say we should do anything with the CGI/FCGI sapi. I am sure 
+its implementation must not be chanhed 'cause it was tested with many webservers 
+during years. I am speaking only about FPM sapi which is much more specific."
+126,http://jcssdev.pythonanywhere.com/bugs/51983/,tony2001@php.net,"Jerome, I agree that we should drop this fix_pathinfo stuff - it makes no sense to adopt all the freaky things from CGI API. 
+The patch requires some extensive testing, though, that's clear. But I don't think we should keep in mind of all the web-servers you mentioned.
+Apache, nginx & lightty are my biggest concern, others can be safely dropped (or assumed working). 
+You can forget about IIS anyway, FPM doesn't support Windows."
+127,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"I mentioned all the web servers to make sure we agree on doing this.
+
+I totaly agree on making this change. This pathinfo thing sucks for real."
+128,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"btw, current fix_pathinfo implementation has security problems:"
+129,http://jcssdev.pythonanywhere.com/bugs/51983/,slim at inbox dot lv,"after applying the patch php compiled with debug complain on every request:
+
+Feb 01 14:26:38.214800 [WARNING] [pool www] child 16257 said into stderr: ""[Tue Feb  1 14:26:38 2011]  Script:  '-'""
+Feb 01 14:26:38.214846 [WARNING] [pool www] child 16257 said into stderr: ""/var/tmp/portage/dev-lang/php-5.3.5-r100/work/sapis-build/fpm/sapi/fpm/fpm/fpm_main.c(1116) :  Freeing 0x08B95CBC (23 bytes), script=-""
+Feb 01 14:26:38.214857 [WARNING] [pool www] child 16257 said into stderr: ""=== Total 1 memory leaks detected ===""
+Feb 01 14:26:40.535416 [WARNING] [pool www] child 16258 said into stderr: ""[Tue Feb  1 14:26:40 2011]  Script:  '-'""
+Feb 01 14:26:40.535466 [WARNING] [pool www] child 16258 said into stderr: ""/var/tmp/portage/dev-lang/php-5.3.5-r100/work/sapis-build/fpm/sapi/fpm/fpm/fpm_main.c(1116) :  Freeing 0x08B95EA4 (23 bytes), script=-""
+Feb 01 14:26:40.535477 [WARNING] [pool www] child 16258 said into stderr: ""=== Total 1 memory leaks detected ===""
+
+a line at fpm_main.c(1116) causing this is 
+SG(request_info).request_uri = request_uri ? estrndup(request_uri, strcspn(request_uri, ""?"")) : NULL;"
+130,http://jcssdev.pythonanywhere.com/bugs/51983/,felipe@php.net,What is the status of this?
+131,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"I'm dequeuing FPM bugs. I've started with the simple ones. This one is on my todo 
+list. I don't have an ETA right now.
+
+++ Jerome"
+132,http://jcssdev.pythonanywhere.com/bugs/51983/,felipe@php.net,"Ah okay, I was wondering if it already has been closed. Thanks."
+133,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"Warning: the following comment is very long. Take time to read it and don't 
+hesitate to ask me for details questions.
+Notes: I've not been able to put it all in one comment (it's detected as spam). 
+So I've split it into several comments.
+
+I just review de patch and there is a problem.
+
+It does not work with mod_fastcgi except when mod_fastcgi is configured as 
+commented before:
+
+DocumentRoot ""/var/www""
+FastCgiExternalServer /var/www -socket /tmp/php-fpm.sock
+<Directory /var/www>
+    Options FollowSymLinks +ExecCGI
+    AllowOverride   All
+    Order           Allow,Deny
+    Allow           from all
+</Directory>
+
+Setting this make all requests to be forward to php-fpm and that is definitely 
+NOT what common configurations aim to do.
+
+More common mod_fastcgi configuration would be something like:
+
+ScriptAlias /fcgi-bin/ /usr/local/apache2/fcgi-bin/
+FastCGIExternalServer /usr/local/apache2/fcgi-bin/php-cgi -host 127.0.0.1:9000
+AddHandler php-fastcgi .php
+Action php-fastcgi /fcgi-bin/php-cgi
+
+and in this case, the patch does not work."
+134,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"but let's analyse all this:
+
+FastCGI defines a communication protocol above CGI 1.1 (which is defined in RFC 
+3875).
+So fastcgi client/servers should be RFC 3875 compliant
+
+
+From RFC 3875:
+Usefull required request variables are:
+- PATH_INFO
+- PATH_TRANSLATED
+- QUERY_STRING
+- SCRIPT_NAME
+
+And the variable which are NOT defined in the RFC:
+- DOCUMENT_ROOT
+- SCRIPT_FILENAME
+- REQUEST_URI
+
+Here is a comparison of common web server behaviour to see what values they send 
+to FPM. See"
+135,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"If FPM would be RFC 3875 compliant, it should:
+- set document_root in its own configuration
+- execute the script set by concatening its own document_root and SCRIPT_NAME
+
+As all web servers are sending DOCUMENT_ROOT correctely, FPM should:
+- execute the script set by concatening DOCUMENT_ROOT and SCRIPT_NAME
+
+In this two cases, nginx and lighttpd would still work, mod_fastcgi should work 
+depending on how it's being used and proxy_mod_fcgi whould just not work.
+
+
+as apache 2.3 is still beta, I hope we could have them change mod_proxy_fcgi 
+behaviour 
+in order to be RFC 3875 compliant... (I've opened a bug report:"
+136,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"Hello,
+
+Here are a few quick thoughts.
+
+1) The fix_pathinfo stuff has been implemented a long ago, and it's main purpose 
+was to workaround the bugs of web servers used 10 years ago. It was 
+developed with the CGI exec()s in mind so the performance impact caused by 
+multiple stat()s was not so important. I see no reason to keep it 
+nowadays.
+
+2) The patch I have proposed hase a bug mentioned in a comment above, that must 
+be fixed. I personally just use fix_patninfo=0 now ;)
+
+3) The CGI protocol itself has been developed (as far as I understand) with a 
+thought that there's some monolithic application which takes PATH_INFO, 
+parses it, does something and prints the results. With PHP applications, there's 
+usually another case - we need to map the request variables to a physical 
+path to the php script, the same way as web server SAPIs do. It does not conform 
+to any RFCs but that's how people DO use PHP, and that's a behavior everyone 
+expects in 99.9999% cases.
+
+4) The non-standard SCRIPT_FILENAME fastcgi variable is widely used in many 
+configurations, and there are standard config samples for nginx etc which rely 
+on 
+the fact that it has been working for years.
+
+5) Your proposal seems mostly OK but I'd prefer if the SCRIPT_FILENAME remains 
+supported.
+
+My proposal would be close to yours:
+
+I. Add the 'fcgi.accept_script_filename' per-pool ini setting, default true;
+
+II. Add the document_root.override per-pool ini setting, default empty.
+
+III. Remove all the fix_pathinfo stuff, and change the corresponding parts of 
+the init_request_info function according to the pseudocode:
+
+function get_script_filename(ini, Env) {
+    var script_filename;
+    if (ini[""fcgi.accept_script_filename""] == true && Env[""SCRIPT_FILENAME""] is 
+not empty) {
+        script_filename = Env[""SCRIPT_FILENAME""];
+    } else {
+         doc_root = undefined;
+         assert(Env[""SCRIPT_NAME""] is not empty); // *
+         if (ini[""document_root.override""] is not empty) {
+             doc_root = ini[""document_root.override""];
+         } else {
+             assert(Env[""DOCUMENT_ROOT""] is not empty);
+             doc_root = Env[""DOCUMENT_ROOT""];
+         }
+         script_filename = concat(doc_root, Env[""SCRIPT_NAME""]);
+    }
+    return script_filename;
+}
+
+*) assert() means 'respond with status 500 if assertion fails'.
+
+The RFC3875 compliance can be achieved by defining document_root.override and 
+setting fcgi.accept_script_filename = false."
+137,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"hi,
+
+thx for the feedback. For SCRIPT_FILENAME, I know it became a pseudo standard. 
+
+But as the concatenation of DOCUMENT_ROOT and SCRIPT_NAME results in  
+SCRIPT_FILENAME, I don't really see why you want to keep it with yet another fpm 
+configuration line ? Maybe I missed something :)
+
+++ Jerome"
+138,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"I remember I've seen a configuration which passed SCIPT_FILENAME but no 
+DOCUMENT_ROOT. (In nginx, you can define any fastcgi variables in the 
+configuraton file, there's nothing hardcoded). I have no idea how many such 
+configurations exist, may be that one was the single of its kind in the world. 
+But it would be definitely wrong to break anything in the 5.3.x branch.
+
+Well, that extra ini setting is probably really unneeded. May be just leave 
+support for SCRIPT_FILENAME (handle it always it if is not empty) in 5.3.x, and 
+drop it in 5.4?"
+139,http://jcssdev.pythonanywhere.com/bugs/51983/,slim at inbox dot lv,"probably it is worth to have additional setting to set webserver in use and select appropriate handling method.
+Something like ""web_server = compliant | apache | iis | anything""
+this will simplify appending of hacks for custom implementations of fastcgi protocol"
+140,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"IIS? FPM does not support Windows, and IIS does not support remote FastCGI. Either 
+ISAPI or local FCGI (via the cgi-fcgi SAPI) are used togerher with IIS, there's 
+nothing about fpm.
+
+For all other known webservers, both Jerome's and my proposals should work fine 
+AFAIK."
+141,http://jcssdev.pythonanywhere.com/bugs/51983/,mabi at gentoo dot org,What's the status of this? Any chance we can have that fixed for 5.4?
+142,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"After having analyzing comments, apache behaviour, here is what I propose for this case.
+
+1- add a fpm configuration directive for each pool named ""fastcgi_client"". Possible values are ""rfc3875"", ""apache_mod_fastcgi"", 
+""apache_mod_proxy_fcgi"" or ""backward_compatibility"". Defaults to ""rfc3875"".
+
+2- add a fpm configuration directive for each pool named ""document_root"". It can be set to a directory. Defaults to (null).
+
+3- add a fpm configuration directive for each pool named ""always_run_script"". It can be set to a php file. Defaults to (null)
+
+When a request is received:
+/*
+ *  Use a custom script to do some routage and other stuf
+ *  In this case FPM does nothing but to passthrough fastcgi variables
+ */
+if (fpm.ini[always_run_script] is set) {
+  return execute_php(fpm.ini[always_run_script])
+}
+
+/*
+ *  override DOCUMENT_ROOT if document_root is set in the FPM config
+ *  otherwise check the DOCUMENT_ROOT sent is a valid directory 
+ */ 
+if (fpm_ini[document_root] is set) {
+  DOCUMENT_ROOT = fpm.ini[document_root]
+  // no need to check if DIR exits as it's been done at conf check
+} else {
+  if (DOCUMENT_ROOT is not set) {
+    return error500 ""document root not set""
+  }
+  if (!is_dir(DOCUMENT_ROOT)) {
+    return error500 ""Documentroot not found or not a directory""
+  }
+}
+
+
+if (fpm.ini[fastcgi_client] == ""backward_compatibility"") {
+  /*
+   * Use the same code as before (with microsoft clean up)
+   * Will maybe be removed in a later release.
+   */
+   
+  see fpm_main.c in function init_request_info()       
+
+}else if (fpm.ini[fastcgi_client] == ""apache_mod_fastcgi"" or ""apache_mod_proxy_fcgi"") {
+ /*
+  *     *** mod_fastcgi ***
+  *    
+  *  SCRIPT_NAME is invalid  (/php5-fcgi)
+  *  PATH_INFO is set to /test.php/more
+  *  SCRIPT_FILENAME is invalid (/tmp/php5-fcgi)
+  *  DOCUMENT_ROOT is set correctly
+  *  PATH_TRANSLATED = DOCUMENT_ROOT + PATH_INFO
+  *  REQUEST_URI is set correctly
+  *  QUERY_STRING is set correctly
+  *  
+  *  ==> use DOCUMENT_ROOT + PATH_INFO                           
+  */
+
+  /*
+  *     *** mod_proxy_fcgi ***
+  *    
+  *  everything is buggy in mod_proxy_fcgi
+  *  PATH_TRANSLATED is set only if proxy-fcgi-pathinfo is set
+  *  PATH_TRANSLATED is set to ""proxy:fcgi://host:port"" + PATH_INFO
+  *  sometimes PATH_TRANSLATED is set to ""proxy:fcgi://host:port"" + PATH_INFO*2
+  *   --> we can rely on PATH_TRANSLATED no matter what
+  *          
+  *  PATH_INFO is set only if proxy-fcgi-pathinfo is set
+  *  PATH_INFO is set to /test.php/more
+  *  SCRIPT_NAME is empty if proxy-fcgi-pathinfo is set
+  *  SCRIPT_NAME has the same value as PATH_INFO when proxy-fcgi-pathinfo is set
+  *   --> we can rely on one of those value. They are the same depending on
+  *       proxy-fcgi-pathinfo        
+  *
+  *  SCRIPT_FILENAME value is consistent and set to 
+  *  ""proxy:fcgi://host:port"" + PATH_INFO
+  *           
+  *  DOCUMENT_ROOT is set correctly
+  *  QUERY_STRING is set correctly  
+  *      
+  *  ==> we will use PATH_INFO or SCRIPT_NAME and DOCUMENT_ROOT  
+  */
+
+  if (fpm.ini[fastcgi_client] == ""apache_mod_fastcgi"") {
+    unset SCRIPT_NAME /* will use PATH_INFO instead */ 
+  }
+
+  /* automatic detection for mod_proxy_fcgi */
+  if (SCRIPT_NAME null or empty) {
+    SCRIPT_NAME = PATH_INFO
+    unset PATH_INFO
+  }
+  
+  if (SCRIPT_NAME is empty) {
+    return error500(""SCRIPT_NAME or PATH_INFO not set"")
+  }
+
+  /* override PATH_TRANSLATED */  
+  PATH_TRANSLATED = DOCUMENT_ROOT + SCRIPT_NAME   
+  
+  if (php.ini[fix_pathinfo] == 1) {
+    /*
+     *  Try to determine SCRIPT_FILENAME and PATH_INFO from PATH_TRANSLATED      
+     */      
+     For each '/' in PATH_TRANSLATED begining from the end of the string {
+       SCRIPT_FILENAME = path before the '/'
+       PATH_INFO = path after the '/' (with the '/' included)
+       if SCRIPT_FILENAME is a valid file {
+         PATH_TRANSLATED = DOCUMENT_ROOT + PATH_INFO
+         return execute_php(SCRIPT_FILENAME)
+       }
+       return error404 ""file not found""        
+     }
+  } else {
+    /*
+     *  Suppose PATH_TRANSLATED is DOCUMENT_ROOT + SCRIPT_NAME
+     *  ignore PATH_TRANSLATED and PATH_INFO     
+     */
+     SCRIPT_FILENAME = PATH_TRANSLATED
+     unset PATH_TRANSLATED
+     return execute_php(SCRIPT_FILENAME)            
+  }    
+
+} else { /* rfc3875 */
+  /*
+   *  simple as descript in RFC 3875
+   *  let PATH_INFO and PATH_TRANSLATED to their value
+   *  change nothing as we are supposed to be rfc compliant :-)      
+   */   
+  
+  if (SCRIPT_NAME not set) {
+    return error500 ""SCRIPT_NAME not set""
+  }
+
+  SCRIPT_FILENAME = DOCUMENT_ROOT + SCRIPT_NAME 
+  return execute_php(SCRIPT_FILENAME)
+}
+
+
+- ""rfc3875"" makes things very easy and quick for nginx, lighthttpd and other compliant fastcgi clients. php.ini fix_pathinfo is not 
+used in this case.
+
+- ""apache_mod_fastcgi"" and ""apache_mod_proxy_fcgi"" makes the code cleaner for apache. Correct values are deducted. php.ini 
+fix_pathinfo is still used. If path_info URL are not used, fix_pathinfo can be disabled to avoid doing useless and costy calls to 
+stats(). It would be maybe possible to use only one value ""apache"" and detect which one is used. But I prefer not to to be able to 
+differentiate them later if need (as proxy_mod_fcgi could hopefully be updated to fix some of its bugs)
+
+- ""backward_compatibility"" for those who have older version of apache or else which is not compatible with the previous mode. 
+Hopefully it won't be needed and will be removed in a later release.
+
+what guys do you think ???
+
+++ jerome"
+143,http://jcssdev.pythonanywhere.com/bugs/51983/,konstantin at symbi dot org,"Do the issues with apache_mod_fastcgi still exist? I remember I've tested it 
+with my patch and it worked well, maybe you've missed some of its settings?
+
+Personally I don't like introducing such ""magic"" settings which are unclear on 
+what they do. It reminds me of that crappy ""broken-scriptfilename"" and ""fix-
+root-scriptname"" lighttpd fastcgi settings. I indeed prefer the nginx way where 
+every fastcgi variable is configured explicitly.
+
+In general it's OK, but I world prefer more obvious settings with names telling 
+about real fastcgi parameters. It's the matter of taste of course.
+
+Anyway, there are two things to take into account: known clients, and backward 
+compatibility for any possible configuration. We need to remember that this is 
+_remote_ fastcgi, and php-fpm may run on a different machine. For instance, I 
+have seen a real life nginx configuration which looked like:
+
+set $remote_php_root /path/to/remote/php/root;
+SCRIPT_FILENAME $remote_root_php/$fastcgi_script_name;
+
+and DOCUMENT_ROOT was defined to the front web server root. It is senseless, but 
+it worked: SCRIPT_FILENAME was correct, and the php code did not use 
+$_SERVER['DOCUMENT_ROOT'] at all.
+
+Also, these changes really should not go to php 5.4 (or go with ""compat"" mode by 
+default). There already have been a BC-breaking change with 
+security.limit_extensions in minor update, I believe no one wants one more."
+144,http://jcssdev.pythonanywhere.com/bugs/51983/,fat@php.net,"> Do the issues with apache_mod_fastcgi still exist? I remember I've tested it 
+> with my patch and it worked well, maybe you've missed some of its settings?
+
+Using a global mod_fastcgi configuration (where everything is sent to FPM) 
+returns full compliant fastcgi envars which are compatible 
+with the ""rfc3875"" mode.
+Using a specific mod_fastcgi configuration (AddHandler, AddAction and Alias) 
+returns buggy fastcgi envars which are compatible with the 
+""apache_mod_fastcgi"" mode.
+
+> Personally I don't like introducing such ""magic"" settings which are unclear on 
+> what they do. It reminds me of that crappy ""broken-scriptfilename"" and ""fix-
+> root-scriptname"" lighttpd fastcgi settings. I indeed prefer the nginx way 
+where 
+> every fastcgi variable is configured explicitly.
+
+I hear you. I don't really mind since the ""magic"" settings are documented and 
+explain what they do. A simple explication ""use 
+apache_mod_fastcgi is your are using mod_fastcgi using ScriptAlias, 
+apache_mod_proxy_fcgi if your using mod_proxy_fcgi, compliant 
+otherwise. If you encouters problems, you can back to backward_compatibility"". 
+And then a more specific explication
+
+""apache_mod_fastcgi: The SCRIPT_FILENAME is deduced using DOCUMENT_ROOT + 
+PATH_INFO. If fix_pathinfo is set, then a reverse search is 
+made on the string to find out the SCRIPT_FILENAME part and the PATH_INFO part 
+by testing (using stat()3) the SCRIPT_FILENAME to ensure 
+it exists on disk.""
+
+""apache_mod_proxy_fcgi: the SCRIPT_FILENAME is deduced using DOCUMENT_ROOT + 
+(PATH_INFO || SCRIPT_NAME). Auto detection is used wether 
+to choose PATH_INFO or SCRIPT_NAME (it depends on the proxy-fcgi-pathinfo 
+settings). If fix_pathinfo is set, the same treatment is done 
+than it's done for apache_mod_fastcgi""
+
+""rfc3875: SCRIPT_FILENAME is deduced using DOCUMENT_ROOT + SCRIPT_NAME. No other 
+actions are taken as the PATH_INFO stuff is done by 
+the web server""
+
+""backward_compatibility: old code untouched. Will maybe be removed in later 
+major release""
+
+
+> In general it's OK, but I world prefer more obvious settings with names 
+telling 
+> about real fastcgi parameters. It's the matter of taste of course.
+
+What do you have in mind ?
+
+Another possibility would be to set the transormation rules inside of fpm 
+configuration with something like:
+
+envvar[SCRIPT_FILENAME] = ""%{DOCUMENT_ROOT}%{SCRIPT_NAME}""
+envvar[SCRIPT_NAME] = ""%{PATH_INFO}
+
+and keep the usage of fix_pathinfo. If set, SCRIPT_FILENAME is searched for real 
+file and PATH_INFO. Otherwise nothing is done.
+In the comments, for each kind of configuration (mod_fastcgi, mod_proxy_fcgi, 
+nginx, lighttpd) the right settings are documented.
+
+In the case, nothing is changed, try to make autodetection based on 
+SERVER_SOFTWARE maybe.
+
+But, even if it's more detailed it's maybe too complex.
+
+
+
+> Anyway, there are two things to take into account: known clients, and backward 
+> compatibility for any possible configuration. We need to remember that this is 
+> _remote_ fastcgi, and php-fpm may run on a different machine. For instance, I 
+> have seen a real life nginx configuration which looked like:
+> 
+> set $remote_php_root /path/to/remote/php/root;
+> SCRIPT_FILENAME $remote_root_php/$fastcgi_script_name;
+> 
+> and DOCUMENT_ROOT was defined to the front web server root. It is senseless, 
+but 
+> it worked: SCRIPT_FILENAME was correct, and the php code did not use 
+> $_SERVER['DOCUMENT_ROOT'] at all.
+
+In all the cases we can't match all the possible solutions, especially ones for 
+nginx as everything can be setup as desired.
+Such a configuration is marginal, I think, and a little change won't kill anyone 
+(I think).
+
+> Also, these changes really should not go to php 5.4 (or go with ""compat"" mode 
+by 
+> default). There already have been a BC-breaking change with 
+>security.limit_extensions in minor update, I believe no one wants one more.
+
+Agree. The code will be put in 5.3, 5.4 and 5.5 but the default settings will be 
+set to ""rfc3875"" only for 5.5 (if it's not been 
+released yet)."
+145,http://jcssdev.pythonanywhere.com/bugs/52065/,manuel at mausz dot at,Can someone please finally take a look at this?
+146,http://jcssdev.pythonanywhere.com/bugs/52065/,nick at aussiecom dot com,Why hasn't this bug been resolved? It's nearly 2 years old...
+147,http://jcssdev.pythonanywhere.com/bugs/52065/,mein at e3b dot org,This bug is also present in php 5.4...
+148,http://jcssdev.pythonanywhere.com/bugs/52065/,cmb@php.net,"The patch open-basedir-without-realpath would fix this issue, but
+it might have security implications or other undesired side
+effects."
+149,http://jcssdev.pythonanywhere.com/bugs/52065/,pajoye@php.net,Any news on this one? Edge case but still :)
+150,http://jcssdev.pythonanywhere.com/bugs/52065/,cmb@php.net,"Considering the amount of closely related bug reports[1], I
+wouldn't necessarily call that an edge case, Pierre. :)
+
+I'll make a PR based on my patch with some tests, if no one beats
+me to it.
+
+[1] I've assembled a maybe non-exhaustive list in
+<"
+151,http://jcssdev.pythonanywhere.com/bugs/52065/,jan dot prachar at gmail dot com,"Broken since 5.3.0, see"
+152,http://jcssdev.pythonanywhere.com/bugs/52065/,a19836 at gmail dot com,"Why isn't this bug fixed yet?
+It was detected in 2013 or even before. And already passed 5 years... 
+
+I trying the following example with PHP 7 and I'm getting exactly the same error.
+
+<?
+ini_set(""open_basedir"", __DIR__);
+file_put_contents(__DIR__ . ""/foo.txt"", ""bar"");
+echo ""EXISTS:"".file_exists(__DIR__ . ""/foo.txt/"");
+?>
+
+Error: PHP Warning:  file_exists(): open_basedir restriction in effect. File(/var/www/html/test/foo.txt/) is not within the allowed path(s): (/var/www/html/test) in /var/www/html/test/test.php on line 4
+
+Can you please fix this and let me know please?
+Thanks"
+153,http://jcssdev.pythonanywhere.com/bugs/52065/,sriccio at swisscenter dot com,"We're seeing this in all the PHP versions we use (5.6, 7.0, 7.1, 7.2).
+
+Literally spent hours trying to understand why we have these warning even that the paths are allowed in the open_basedir directive.
+
+Finally it was because the parent dir of a path was in fact a file and not a dir.
+
+The warning message is really misleading...
+
+It would really be nice to fix this"
+154,http://jcssdev.pythonanywhere.com/bugs/52065/,michael dot vorisek at email dot cz,"Please fix asap, reported by many users. Thank you."
+155,http://jcssdev.pythonanywhere.com/bugs/52065/,php dot stephan at lippe-net dot de,"Cool, a bug described in 2010 not even fixed in PHP 8.0RC3.
+That's a statement!"
+156,http://jcssdev.pythonanywhere.com/bugs/52065/,bugs-php dot a2 at x25 dot pl,"cat a.php
+<?
+ini_set(""open_basedir"",""/home/naox/public_html/test"");
+mkdir(""/home/naox/public_html/test"");
+
+php a.php
+
+Warning: mkdir(): open_basedir restriction in effect. File(/home/naox/public_html/test) is not within the allowed path(s): (/home/naox/public_html/test) in /home/naox/public_html/naox.vipserv.org/a.php on line 3"
+157,http://jcssdev.pythonanywhere.com/bugs/52065/,cmb@php.net,"> […] but it might have security implications […]
+
+Indeed, it would.  Passing FALSE as 5th parameter to
+expand_filepath_with_mode() actually means CWD_EXPAND, and that
+would not resolve symlinks.
+
+A possible solution for the issue would be to change
+php_check_specific_open_basedir() so that it returns different
+values for failure (currently it always returns -1, what should
+actually be FAILURE), so that the caller could distinguish between
+an actual open_basedir violation, and an invalid path (as is the
+case here; files can't have subdirectories).  However. the functon
+is exported, so changing the result values would be a BC break
+(and a rather delicate at that).
+
+An alternative would be to introduce another function, say
+php_check_specific_open_basedir_ex() which gives more detailed
+failure information, but frankly, why not simply change the error
+message?
+
+Of course, one may argue that ""file checking"" functions, such as
+is_readable() or is_file() should not warn at all, but simply
+rreturn false, but again, that would require to modify the
+existing funtion, or to introduce a new one, because currently
+there is no such distintion when checking for potential
+open_basedir violations.  A global flag to the rescue?"
+158,http://jcssdev.pythonanywhere.com/bugs/52065/,rtrtrtrtrt at dfdfdfdf dot dfd,"> why not simply change the error
+> message?
+
+because any message is a problem to begin with and more important: in most of the cases you get a message that a path which is obviously within open_basedir isn't  
+
+you could even check that and be silent given that when i see that as human with the blink of an exe why shouldn't a computer?
+
+> Of course, one may argue that ""file checking"" functions, such as
+> is_readable() or is_file() should not warn at all, but simply
+> rreturn false, but again, that would require to modify the
+> existing funtion
+
+and *that* is the point after decades where this annoying behavior exists - wenn i ask from inside the application if a file exists i don't care why i can't reach it (don't exist, no permissions, open_basedir)
+
+especially on systems with error_reporting E_ALL on purpose and sending twice per hours log collections with a ""fix it"" policy it's really annoying and when you also have a don't use @ for error supression policy you are doomed"
+159,http://jcssdev.pythonanywhere.com/bugs/52376/,pajoye@php.net,Can you try to follow the advice here please:
+160,http://jcssdev.pythonanywhere.com/bugs/52376/,ryan at kisc dot edu dot np,"Well, that allows me to browse to the folder via chrome and essentially does the 
+same thing as the 
+workaround from #50542 but only on the one folder which could work. What it does 
+not appear to do 
+is give me programmatic access to the folder. The instructions in that KB are 
+outdated as it uses 
+adsutil.vbs and the setting is the same as the ""Physical Path Credentials"" from 
+the IIS manager. 
+This could work, in a much less than ideal way, if there is some way to run 
+""opendir"" on the 
+virtual directory without specifying the unc path (since the UNC path itself 
+still does not work). 
+I could just be unaware of how, since it seems to use the system paths and not 
+honor or even 
+acknowledge virtual directories. I tried lots of different formats against my 
+better judgement but 
+none worked. I even tried using the http path reference. Still no joy. I've used 
+PHP since 1998 but 
+realize something could have changed at any one of the releases, however I'm not 
+sure I see how a 
+virtual directory could solve the ability to use opendir. Fair enough if this 
+was just a try. I'm 
+happy to keep trying if it can help the community. This worked fabulously in 
+IIS6. I also confess 
+that it appears to be Microsoft's fault. Very frustrating.
+
+I wonder if I can create a symbolic link equivalent. I've done this before in 
+older versions of 
+windows, but I don't think I've ever done it to a network share. In my case I 
+may be able to just 
+move the share to the IIS server and be done with it, but I'm willing to stick 
+this out if it will 
+help find a solution to this issue."
+161,http://jcssdev.pythonanywhere.com/bugs/52376/,ryan at kisc dot edu dot np,"sorry about the line breaks, apparently this site doesn't like what Chrome does when I resize the text box. I'll be more careful in the future. Actually this site seems to hate Chrome altogether. 
+I keep getting ""incorrect username"" constantly. The bug site is buggy, at least in Chrome."
+162,http://jcssdev.pythonanywhere.com/bugs/52376/,aharvey@php.net,"(Restoring status.)
+
+As a fellow Chrome user, I feel your pain. :)"
+163,http://jcssdev.pythonanywhere.com/bugs/52376/,mark at internode dot on dot net,"Hi I am having the same problem with PHP 5.3.5 running under IIS 7.5, FastCGI, Windows Server 2008 R2 where I am simply trying to access a file on another server using a UNC path.
+
+$uploadfile = ""\\<server>\<share>\<folder>\<file>.txt"";
+$fh = fopen($uploadfile, 'r') or die(""Can't open file $uploadfile"");
+
+I have tried granting ""everyone"" full permissions for the share and the file system but it still does not work.
+
+This code works perfectly if the file is stored on the same server and is accessed through a local path.
+
+Other things I have tried inlcude:
+- setting the defaultappool to use a specific user and granting that user permissions on the share and file system
+- using ""network"" as above
+
+Any other ideas on this one?"
+164,http://jcssdev.pythonanywhere.com/bugs/52376/,marc dot seitz at ww-informatik dot de,"Hi Guys,
+
+we have exactly the same problem now.
+We want to migrate to Windows Server 2008 R2 with IIS 7.5, FastCGI, PHP 5.3.6.
+
+When I try to do a file_get_contents(<UNC-PATH>) or opendir(<UNC-PATH>) I always will get the error:
+Warning: fopen(<UNC-PATH-TO-FILE>): failed to open stream: Permission denied in D:\inetpub\wwwroot\XXX.php on line 26
+
+The Application-Pools of the IIS are running under a Domain-Account which has access to the Network Share.
+
+I don't know how to solve this problem.
+
+Any ideas of you?
+
+Thanks 
+Marc"
+165,http://jcssdev.pythonanywhere.com/bugs/52376/,em at ducommun dot ch,"I have exactly the same problem.
+
+I have tried to map the share to a letter, exemple Z:/ same result.
+This is not a permissions problem.
+
+Please help.
+
+Config: xampp running under w2k3r2 server, with php 5.3.5
+
+Thanks!"
+166,http://jcssdev.pythonanywhere.com/bugs/52376/,mike dot riendeau at gmail dot com,"I fixed this in Win7 IIS7 Through the inetmgr.
+WebSite->Authentication->Anonymous Authentication (edit on side panel)
+I changed the Specific User (IUSR) to Application pool identity.
+I am only using it for local development, so I'm not sure how this affects security."
+167,http://jcssdev.pythonanywhere.com/bugs/52376/,alexkyrlis at me dot com,"Greetings,
+
+I have the same problem, expect that, when testing this script:
+
+<?PHP
+error_reporting(E_ALL);
+opendir(""//node1/wwwroot/public/joomla"");
+?>
+
+I get no errors, PHP actually likes this path, no problem.
+But, this same path is not accepted by Windows. Instead, the correct path that 
+Windows 2008 (and IIS) recognizes is:
+
+\\node1\wwwroot\public\joomla
+
+This is quite an annoying problem. Windows likes \ and php likes / in the path.
+
+Any ideas?
+
+Thanks
+Alex"
+168,http://jcssdev.pythonanywhere.com/bugs/55138/,an0nym at narod dot ru,"This issue can be worked around by adding $statement->bindParam("":test"", 
+$test>>>, PDO::PARAM_STR, 4000<<<), however this does not fix the bug itself."
+169,http://jcssdev.pythonanywhere.com/bugs/55138/,dernelson at corelogic dot com,"This issue also affects PDOStatement::bindValue(), which does not have the 4th parameter ""length"" like bindParam() does, so the workaround is not always possible."
+170,http://jcssdev.pythonanywhere.com/bugs/55639/,kolya at telepark dot ua,Margins qop and nc should not be quoted (defined by RFC)
+171,http://jcssdev.pythonanywhere.com/bugs/55831/,bjori@php.net,Are you planning on commit this patch?
+172,http://jcssdev.pythonanywhere.com/bugs/60707/,laruence@php.net,"max_input_vars is used to protected from ddos attack, IMO it's not a big deal :)"
+173,http://jcssdev.pythonanywhere.com/bugs/60961/,megazubr at gmail dot com,"Centos 5.8, php 5.4.4 compiled from source with --enable-fpm
+When doing USR2 on master pid of php-fpm daemon
+1. kill child(502 Bad gatway on long_loop.php in same time)
+2. restart daemon with another master pid
+
+As i see, it's not a graceful reload.
+
+master pid - 12788
+child(long_loop.php) - 12795
+
+strace -f -s 8000 -p 12788
+
+[pid 12795] munmap(0x2b017edd1000, 1168) = 0
+[pid 12795] munmap(0x2b017edd2000, 1168) = 0
+[pid 12795] munmap(0x2b017edd3000, 1168) = 0
+[pid 12795] munmap(0x2b017edb5000, 112) = 0
+[pid 12795] time(NULL)                  = 1342505962
+[pid 12795] dup2(1, 2)                  = 2
+[pid 12795] close(4)                    = 0
+[pid 12795] dup2(13, 0)                 = 0
+[pid 12795] geteuid()                   = 0
+[pid 12795] setgid(500)                 = 0
+[pid 12795] open(""/proc/sys/kernel/ngroups_max"", O_RDONLY) = 4
+[pid 12795] read(4, ""65536\n"", 31)      = 6
+[pid 12795] close(4)                    = 0
+[pid 12795] open(""/etc/group"", O_RDONLY) = 4
+[pid 12795] fcntl(4, F_GETFD)           = 0
+[pid 12795] fcntl(4, F_SETFD, FD_CLOEXEC) = 0
+[pid 12795] fstat(4, {st_mode=S_IFREG|0644, st_size=693, ...}) = 0
+[pid 12795] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 
+-1, 0) = 0x2b017b3ce000
+[pid 12795] lseek(4, 0, SEEK_CUR)       = 0
+[pid 12795] read(4, 
+""root:x:0:root\nbin:x:1:root,bin,daemon\ndaemon:x:2:root,bin,daemon\nsys:x:3:roo
+t,bin,adm\nadm:x:4:root,adm,daemon\ntty:x:5:\ndisk:x:6:root\nlp:x:7:daemon,lp\nm
+em:x:8:\nkmem:x:9:\nwheel:x:10:root\nmail:x:12:mail,exim\n"
+174,http://jcssdev.pythonanywhere.com/bugs/60961/,php-bugs at puzzled dot xs4all dot nl,CentOS 6.3 with php-5.3.3 and the FPM code from 5.3.20 still has the same issue. FWIW this makes it challenging to use nginx with php-fpm because it results in a 502 Bad Gateway. I'm more than happy to help testing a patch.
+175,http://jcssdev.pythonanywhere.com/bugs/60961/,phpbugs at oops dot mooo dot com,Try setting process_control_timeout to something higher than 0.
+176,http://jcssdev.pythonanywhere.com/bugs/60961/,baohx2000 at gmail dot com,"Having this issue on 5.5.3.  Sending USR2 to master process kills the master and 
+orphans the children.  Have to then kill all children before I can restart the 
+master process."
+177,http://jcssdev.pythonanywhere.com/bugs/60961/,ptr dot wang at gmail dot com,"php5-fpm 5.5.8+dfsg-3+sury.org~precise+2 on ubuntu precise has the same problem.
+killing USR2 signal to php5-fpm master process causes all php5-fpm processes (include the master process) replaced, and the active requests end up with HTTP 502 Bad gateway error on the nginx side."
+178,http://jcssdev.pythonanywhere.com/bugs/60961/,yinchuan at baixing dot com,"CentOS 6.5 + Nginx 1.4.7 + PHP 5.4.9 with php-fpm
+""fastcgi_keep_conn on;"" in nginx.conf
+set pm.max_request=100, then when thd 100th reqest reach, php process exit, and nginx log error:""... recv() failed (104: Connection reset by peer) while reading response header from upstream, client: XXX""
+
+when set ""fastcgi_keep_conn off;"", everything is ok."
+179,http://jcssdev.pythonanywhere.com/bugs/60961/,razvanphp at yahoo dot com,"I have the same problem with PHP 5.4.39-0+deb7u2, latest Debian Wheezy.
+
+Nginx mainline 1.9 uses unix socket connection to php-fpm, but it results in 502 when reloading php-fpm service.
+
+Found this in the code, that seems to cause this:
+
+static void sig_soft_quit(int signo) /* {{{ */
+{
+       int saved_errno = errno;
+
+       /* closing fastcgi listening socket will force fcgi_accept() exit immediately */
+       close(0);
+       if (0 > socket(AF_UNIX, SOCK_STREAM, 0)) {
+               zlog(ZLOG_WARNING, ""failed to create a new socket"");
+       }
+       fpm_php_soft_quit();
+       errno = saved_errno;
+}"
+180,http://jcssdev.pythonanywhere.com/bugs/60961/,konrad dot baumgart at moneyhouse dot de,"This bug affects many people, but it seems the assigned person does not contribute to bugfixing anymore.
+
+Can we get it unassigned/reassigned?
+
+Bug is still present with nginx 1.10 and php 7 communicating with unix socket"
+181,http://jcssdev.pythonanywhere.com/bugs/60961/,albertcasademont at gmail dot com,"Yes please, a graceful reload is needed urgently. And more generally, php-fpm needs some love"
+182,http://jcssdev.pythonanywhere.com/bugs/60961/,luke at viovet dot co dot uk,This is also affecting PHP 7.1 on Ubuntu 14.04 and 16.04. Please fix asap.
+183,http://jcssdev.pythonanywhere.com/bugs/60961/,federico dot omoto at gmail dot com,"And this is also affecting the recently released PHP 7.2.0.
+Is this bug expected to be fixed in the short term?"
+184,http://jcssdev.pythonanywhere.com/bugs/60961/,i at xstudio dot me,mark!
+185,http://jcssdev.pythonanywhere.com/bugs/60961/,danny dot kopping at hetzner dot co dot za,"Hi
+
+We have been experiencing this issue for a while, and after some investigation - we think we have isolated the issue.
+
+This is how we understand it:
+When FPM receives a USR2 signal, it attempts to wait for its children to finish processing, and then sends a QUIT signal to each child. If a child does not respond in the amount of time defined in ""process_control_timeout"" then the master process sends a TERM.
+
+Now, while FPM is waiting for its children to terminate, it goes into a ""reloading"" state, it would seem. It prints the message ""Reloading in progress ..."" to its log. During this time, one can send as many USR2 signals to the master process as one likes - it will not cause any problems. However, if one sends a USR2 signal after the `execvp(""/usr/sbin/php-fpm7.1"", {""/usr/sbin/php-fpm7.1"", ""--nodaemonize"", ""--fpm-config"", ""/etc/php/7.1/fpm/php-fpm.conf""})` syscall and before receiving the ""fpm is running, pid xxx"" log entry - then it will crash the master process and consequently all the children.
+
+Our suspicion is that the signal handling is buggy between startup time and moving into the ""ready to accept connections"" state (without looking at the source)."
+186,http://jcssdev.pythonanywhere.com/bugs/60961/,ingo dot bez at gmx dot de,"May I ask carefully if and when this problem will be solved?
+Seven years open, a patch functional since the beginning of 2017 and public for 11 months now... Wow."
+187,http://jcssdev.pythonanywhere.com/bugs/60981/,danielc@php.net,"The environment variables need to be established in a scope available all shell scripts.  For example, them in the ~/.bashrc script of the user executing ""make test"".
+
+Set the variables in ~/.bashrc
+source ~/.bashrc
+make test ....
+
+The ""source"" step is only necessary in the first shell since the variables were not available when the shell was opened.  All future shells will have them."
+188,http://jcssdev.pythonanywhere.com/bugs/60981/,david at davidfavor dot com,"export var=foo is the same as sourcing a file that includes...
+export var=foo
+
+Problem is no shell environment is reaching the test scripts.
+
+Please suggest a way to turn off clearing of the environment."
+189,http://jcssdev.pythonanywhere.com/bugs/60981/,sixd@php.net,Try adding E to php.ini's variables_order.
+190,http://jcssdev.pythonanywhere.com/bugs/60981/,david at davidfavor dot com,"That works...
+
+So there are two doc errors...
+
+#1)"
+191,http://jcssdev.pythonanywhere.com/bugs/60981/,tyrael@php.net,"AFAIK getenv does work independently from variable_orders:
+foo=bar php -d variables_order=GPC -r 'echo $_ENV[""foo""];echo getenv(""foo"");'
+outputs ""bar"" for me, so it works.
+
+Tyrael"
+192,http://jcssdev.pythonanywhere.com/bugs/60981/,tyrael@php.net,the problem is that the run-tests.php fetches the environment variables from $_ENV
+193,http://jcssdev.pythonanywhere.com/bugs/60981/,jpauli@php.net,"I confirm that getenv() works regardless any .ini config.
+It proxies to SAPI/system getenv()"
+194,http://jcssdev.pythonanywhere.com/bugs/60981/,tyrael@php.net,"'Both php.ini-production and php.ini-development contain ""GPCS"".'
+the default value means that what is the value if you don't set it any way (having 
+no php.ini or using php -n for example)
+unfortunately the default values and our developer/production inis aren't in sync, 
+I brought that issue up on the mailing list in the past:"
+195,http://jcssdev.pythonanywhere.com/bugs/60981/,david at davidfavor dot com,"Seems like adding --d variable_orders=EGPCS to run-tests is the most elegant.
+
+What the next step to arrange for this bug to be fixed?
+
+Also I notice there are 4 failures in the mysqli tests. Let me know how to 
+register as a developer with php.net and I'll figure these out and supply 
+patches to fix the test suite.
+
+Thanks."
+196,http://jcssdev.pythonanywhere.com/bugs/60981/,tyrael@php.net,"""--d variable_orders=EGPCS to run-tests""
+if you mean adding that to Makefile.global (the Makefile template, which will 
+run run-tests.php when you execute make test) then yeah, it is an elegant 
+solution, but I think it would be better to fix run-tests.php itself, so for 
+those who call it directly (half of the core/qa people...) will also be fixed.
+Pierre told me that there is no clean way to fetch all environment vars from a 
+php script if $_ENV isn't populated (you could parse it from the output of 
+phpinfo() but that would be error-prone and messy).
+So I would propose calling another php instance and fetching the environment 
+variables from there using shell_exec.
+See the attached patch.
+(If somebody has a better idea, I'm all for it.)"
+197,http://jcssdev.pythonanywhere.com/bugs/60981/,david at davidfavor dot com,Just tested supplied patch and seems to work well.
+198,http://jcssdev.pythonanywhere.com/bugs/60981/,tyrael@php.net,"I've just noticed that I got the patch reversed, I fixed it, now it should apply 
+without the ""Reversed (or previously applied) patch detected!  Assume -R? [n]"" 
+question."
+199,http://jcssdev.pythonanywhere.com/bugs/60994/,php dot net at boedah dot de,"adding the full code sample as patch did not work in the first place
+-> attached it now"
+200,http://jcssdev.pythonanywhere.com/bugs/60994/,ashnazg@php.net,Comments on my experience with this bug --
+201,http://jcssdev.pythonanywhere.com/bugs/60994/,ashnazg@php.net,PHPT test for this bug is in PR #1566 (
+202,http://jcssdev.pythonanywhere.com/bugs/60994/,rstark at us dot ibm dot com,I have submitted a PR for this issue
+203,http://jcssdev.pythonanywhere.com/bugs/61525/,rkip at reprovinci dot nl,The returned header value could perhaps also be ltrimmed.
+204,http://jcssdev.pythonanywhere.com/bugs/61584/,felipe@php.net,"Thank you for this bug report. To properly diagnose the problem, we
+need a short but complete example script to be able to reproduce
+this bug ourselves. 
+
+A proper reproducing script starts with <?php and ends with ?>,
+is max. 10-20 lines long and does not require any external 
+resources such as databases, etc. If the script requires a 
+database to demonstrate the issue, please make sure it creates 
+all necessary tables, stored procedures etc.
+
+Please avoid embedding huge scripts into the report."
+205,http://jcssdev.pythonanywhere.com/bugs/61584/,osama dot sorour at eformations dot net,"It is almost impossible to make it happen on purpose. It happened in my code, 
+which was thousands of lines long with about 30 classes. In addition, when it 
+used to happen, it used to happen randomly at different locations.
+
+Please note that regardless of reproduction, the method used in the current code 
+to set the readline buffer is wrong. Please refer to the patch and readline 
+documentation:
+
+Variable: char * rl_line_buffer
+This is the line gathered so far. You are welcome to modify the contents of the 
+line, but see 2.4.5 Allowing Undoing. The function rl_extend_line_buffer is 
+available to increase the memory allocated to rl_line_buffer.
+
+which clearly indicates that you are only allowed to change it, not replace the 
+buffer pointer as it is done in the current code.
+
+From the readline documentation, here is the correct way of completely replacing 
+the buffer:
+
+Function: void rl_replace_line (const char *text, int clear_undo)
+Replace the contents of rl_line_buffer with text. The point and mark are 
+preserved, if possible. If clear_undo is non-zero, the undo list associated with 
+the current line is cleared."
+206,http://jcssdev.pythonanywhere.com/bugs/61584/,cmb@php.net,"According to the official documentation[1] of readline, this is
+indeed an API misuse on our behalf (but these docs *might* just be
+misleading).  However, I found some older docs which do not even
+mention rl_extend_line_buffer(), so we may need to conditionally
+use that function (assuming those old versions are still
+relevant).  Also we would need to check whether
+rl_extend_line_buffer() is supported by editline (which often
+serves as replacement for readline).  It is apparently not
+supported by windeditline which is used for Windows builds, and
+I'm not sure whether changing rl_line_buffer there is supported,
+or if there is an alternative mechanism.
+
+So the attached patch would need to be revised.
+
+[1] <"
+207,http://jcssdev.pythonanywhere.com/bugs/61597/,aharvey@php.net,"I can't reproduce this:
+
+<?php
+$xml = <<<'EOX'
+<?xml version=""1.0""?>
+<parent>
+    <child attr=""foo"">text content</child>
+</parent>
+EOX;
+
+$doc = simplexml_load_string($xml);
+printf(""Text content: %s; attribute: %s\n"", $doc->child, $doc->child['attr']);
+?>
+
+Outputs ""Text content: text content; attribute: foo"", as I'd expect. Are you 
+able to provide a reproduction script?
+
+The SO discussion appears to be about JSON encoding only; given that 
+SimpleXMLElement doesn't support serialisation, I'd suggest that the same would 
+apply to JSON encoding."
+208,http://jcssdev.pythonanywhere.com/bugs/61597/,jplyon dot csu at gmail dot com,"another test:
+
+$xml = <<<'EOX'
+<?xml version=""1.0""?>
+<data>
+<datum file-key=""8708124062829849862"">corn</datum>
+</data>
+EOX;
+
+$doc = simplexml_load_string($xml);
+
+echo $doc->asXML();
+
+echo print_r($doc);
+
+This is not a problem with loading for me - I am building my SimpleXML object 
+dynamically.
+The output from asXML() is correct.
+The output from print_r() is not.
+The output using attributes() (in a more complex example) is not correct, 
+although this simple test does work.
+
+I am experiencing this on various versions of PHP 5.3.X on Windows Vista and 
+Ubuntu 11.10.
+
+(ubuntu)$ php -v
+PHP 5.3.2-1ubuntu4.9 with Suhosin-Patch (cli) (built: May  3 2011 00:45:52)
+Copyright (c) 1997-2009 The PHP Group
+Zend Engine v2.3.0, Copyright (c) 1998-2010 Zend Technologies
+    with Suhosin v0.9.29, Copyright (c) 2007, by SektionEins GmbH
+
+(Windows)>php -v
+PHP 5.3.8 (cli) (built: Sep 22 2011 20:51:51)
+Copyright (c) 1997-2011 The PHP Group
+Zend Engine v2.3.0, Copyright (c) 1998-2011 Zend Technologies"
+209,http://jcssdev.pythonanywhere.com/bugs/61597/,aharvey@php.net,"Ah, I see what you're getting at now. Thanks. It appears to be an issue with the 
+get_properties and get_debug_info handlers for SimpleXMLElement.
+
+This has been reported and closed as a duplicate before, but I think that was 
+mistaken, as we don't have an open bug for this at present that I can find."
+210,http://jcssdev.pythonanywhere.com/bugs/61597/,hugh at infomenta dot com,"I am having exactly the same problem and it is not feasible to add an extra tag to all of my ""text"" entries."
+211,http://jcssdev.pythonanywhere.com/bugs/61597/,dbai at drivenbi dot com,"Is there any update on this one? A 3rd party PHP library I'm using has a defect 
+which, I think, is caused by this problem because the phenomenon is that attribute 
+in the XML node is not loaded, and that XML node happens to have text content."
+212,http://jcssdev.pythonanywhere.com/bugs/61597/,tlesher at mtadistributors dot com,"Just by way of a note, this problem is still occurring in PHP 5.5.24."
+213,http://jcssdev.pythonanywhere.com/bugs/61597/,cmb@php.net,"> This has been reported and closed as a duplicate before, but I
+> think that was mistaken, as we don't have an open bug for this
+> at present that I can find.
+
+There is"
+214,http://jcssdev.pythonanywhere.com/bugs/61597/,cmb@php.net,"To clarify: not only attributes may be swallowed in debug output,
+but also elements of mixed content."
+215,http://jcssdev.pythonanywhere.com/bugs/61597/,cmb@php.net,"The bad ""fix"" has been reverted – re-opnening."
+216,http://jcssdev.pythonanywhere.com/bugs/62032/,reeze dot xia at gmail dot com,"Hi, 
+  I think it's a document problem. you could refer this commit:"
+217,http://jcssdev.pythonanywhere.com/bugs/62032/,iamcraigcampbell at gmail dot com,"Well I can understand stripping it if there is a closing > somewhere, but if it is 
+a < that is not followed by a matching > then it should be allowed in the string 
+and not stripped.  I think strip_tags works as expected."
+218,http://jcssdev.pythonanywhere.com/bugs/62032/,reeze dot xia at gmail dot com,"strip_tags will strip it even without the ending '>' if  '<' followed by a
+non-space char.
+
+If we need to check whether is a closed tag it is a feature request to change it's 
+behavior. it will break BC."
+219,http://jcssdev.pythonanywhere.com/bugs/62032/,reeze dot xia at gmail dot com,"PS: the reason why strip_tags() didn't strip it is '<' is followed by a
+space char but not without ending '>', this is the key point.
+
+look deep into the source code, there difference is switch whether or 
+not to trait '<' followed by a(or more) spaces a tag or not."
+220,http://jcssdev.pythonanywhere.com/bugs/62032/,iamcraigcampbell at gmail dot com,"So in that case I think strip_tags and filter_var are both broken.  In this context: 
+""It is true that 5<10""
+""It is true that 5 < 10""  
+
+Neither of these are html tags so the string should not be touched regardless of if 
+there is a space or not."
+221,http://jcssdev.pythonanywhere.com/bugs/62032/,pajoye@php.net,"> or < should be encoded then, see"
+222,http://jcssdev.pythonanywhere.com/bugs/62032/,aleksey dot v dot korzun at gmail dot com,"How is stripping anything after < with a space is a valid operation? That seems 
+like a lazy man's html stripper.
+
+Let's just blindly strip everything that can possibly be made into an html tag of 
+any sort. Not."
+223,http://jcssdev.pythonanywhere.com/bugs/62032/,iamcraigcampbell at gmail dot com,"@pajoye I agree with you, but there is a use case that encoding will not solve.
+
+Let's say there is a forum where users are posting.  If the user posts:
+
+""This is <strong>NOT</strong> good!"" and the tags get encoded then that means the 
+HTML tags will be displayed in the forum as plain text.  I think it is more expected 
+behavior to display this string as ""This is NOT good!"".
+
+So one option would be encoding the < only if it is not followed by a > but that is a 
+lot of extra work to figure that out.
+
+
+At the end of the day the point is that no matter how you look at it I still think 
+this is a bug.
+
+$string = 'This is true: 2<5';
+strip_tags($string); and filter_var($string, FILTER_SANITIZE_STRING);
+
+Should not strip out <5 since that is not an HTML tag."
+224,http://jcssdev.pythonanywhere.com/bugs/62032/,anon at anon dot anon,"Well I never heard of this ""SANITIZE_STRING"" filter before, but it looks just as retarded as it sounds, and about as retarded as strip_tags. 99.99% of the time, strip_tags just should not be used at all because it's horribly broken. The real bugs are (1) strip_tags exists, and (2) that PHP should imply that any kind of magical all-purpose ""string sanitization"" process could exist.
+
+@iamcraigcampbell:
+>Well I can understand stripping it if there is a closing > somewhere, but if it is 
+a < that is not followed by a matching > then it should be allowed in the string 
+and not stripped.
+In that case:
+(1) Unclosed tags will eat extra page content, breaking page layout.
+(2) Pages consist of many echo statements. By your logic, ""<script"" is a possibly legal string to echo, but if some later string contains a "">"", we need to implement a delayed-choice quantum eraser to make all the parallel universes in which the earlier echo statement occurred cease to exist.
+
+>I think it is more expected behavior to display this string as ""This is NOT good!"".
+No. Display what users type. Don't delete text from their posts based on the quirks of what just happens to be the underlying display format on a particular day. Suppose your hypothetical forum also displays posts in another format, e.g., it has a Flash or iPhone-based app, or it tweets posts, or a few years from now we're all using a completely different markup language. Should it then also strip HTML-like tags from all text in perpetuity from all media just because HTML happened to be a relevant format to someone somewhere once upon a time, or should user-submitted text throw integrity to the wind and change depending on what kind of device someone is attempting to use to view it, whether or not that device's markup was invented when the post was made? What if someone is trying to use text that legitimately resembles an HTML tag (it happens), or, more likely, they're trying to quote or talk about HTML -- no filter can handle this. No no no no no. Display what they type and don't confuse the poor souls. I.e., use htmlspecialchars() if outputting to HTML; or if not, use whatever other escaping method is appropriate to the particular output format that still preserves the integrity of the user-typed text in that format, while making exception for the formatting markup that is legitimately supported and documented to be supported by the forum, such as markdown or bbcode syntax (and probably not HTML, since besides the fact that HTML is ugly and over-complicated for most forum post needs, strip_tags with an allowed tags parameter is the most dangerous of the lot and allows blatant abuse via attributes).
+
+And don't get me started on entities.
+
+tl;dr: no amount of wrapping it in flashy filter functions changes the fact that strip_tags confuses countless souls, is brain-damaged, and ought to be deprecated to death."
+225,http://jcssdev.pythonanywhere.com/bugs/62032/,iamcraigcampbell at gmail dot com,"@anon I agree with many of your sentiments :)
+
+Just wanted to point out one thing.  The issue of unclosed script tags or other tags 
+would not be a problem assuming the output is escaped which it should be.  Therefore 
+if you had ""<script"" in the string it would end up being output as &lt;script and 
+would not cause the issues that you mentioned.
+
+As for displaying what the user typed I could see an argument either way on that.  
+The fact still remains that this is a bug."
+226,http://jcssdev.pythonanywhere.com/bugs/62032/,cmb@php.net,"I agree insofar as FILTER_SANITIZE_STRING and strip_tags() should
+work identical, and I would have supposed that both share a common
+implementation, what apparently isn't the case."
+227,http://jcssdev.pythonanywhere.com/bugs/62106/,ab@php.net,"Please test the supplied patch. Ideally you could do this with your productive 
+dev environment. Because cleanup happens on request shutdown, looks like it's 
+nearly impossible to test this with phpt. Consider the following piece of code:
+
+<?php
+
+set_time_limit(0);
+ini_set('memory_limit', '768M');
+
+$zip_fname = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bug62106.zip';
+
+$s = 'a';
+foreach (array(1024, 1024, 200) as $b) {
+        $s = str_repeat($s, $b);
+}
+
+$zip = new ZipArchive();
+$r = $zip->open($zip_fname, ZipArchive::CREATE);
+
+if ($r) {
+        $zip->addFromString('huhu.txt', $s);
+
+        set_time_limit(3);
+        $zip->close();
+}
+
+register_shutdown_function will not work here because it's a part of request. 
+But it's clearly to see - without patch there are temp files there, and with the 
+patch the cleanup works. But the best were of course if you test it directly 
+with your app. If you have an idea how to test this with phpt, it would be also 
+great :)"
+228,http://jcssdev.pythonanywhere.com/bugs/62106/,t dot glaser at tarent dot de,"Hum. Unfortunately, I cannot bring a self-compiled PHP into the production 
+system, especially as it runs Debian lenny still. But within some time, I 
+should be able to test the patch on Debian wheezy, on a test instance, by 
+using a self-compiled locally patched source package, as they’re on 5.4 
+already.
+
+Your testcase looks sound to exhibit this behaviour on all but the fastest 
+machines.
+
+I have no idea what phpt is, sorry."
+229,http://jcssdev.pythonanywhere.com/bugs/62106/,ab@php.net,"Yep, I'd better not start do get all the 5.4 deps on lenny :)
+
+The test code should work also on faster mashines. If not - decreasing the last 
+set_time_limit(3) or increasing the data amount should work. On 
+current PHP versions a temp file should be laying around anyway after the script 
+has 
+exited with the time limit warning. I mean even the fastest drive cant get 200M 
+wrote on it in 3 sec ) . But way much better is of course to test 
+with your app on a test instance.
+
+The patch should apply to 5.3, 5.4 and master as well. 
+
+PHPT are the test case files from the PHP test framework. Such files are usually 
+to find in ""tests"" subfolders inside the PHP source tree. You can read more 
+under"
+230,http://jcssdev.pythonanywhere.com/bugs/62106/,pajoye@php.net,"hi!
+
+Thanks for the bug report and patch!
+
+I do not like the idea of having php specific function called or used like it is 
+in this patch.
+
+Temporary files are created while working with a given archive. These files 
+should be destroyed when the archive is not used anymore, on resource or object 
+destroy.
+
+Maybe a function in the zip library could be added for this cleanup."
+231,http://jcssdev.pythonanywhere.com/bugs/62106/,ab@php.net,"I'll be working on improving libzip then. But I think, testing the current patch 
+would make sense anyway. At least it could prove the code path, despite we could 
+pack the improved libzip stuff into a __destruct() or alike."
+232,http://jcssdev.pythonanywhere.com/bugs/62106/,cmb@php.net,"> Maybe a function in the zip library could be added for this
+> cleanup.
+
+Wouldn't calling zip_discard() be sufficient if zip_close() fails?
+Cf. <"
+233,http://jcssdev.pythonanywhere.com/bugs/63343/,brn at macrovita dot com dot br,"Note: This bug is NOT specific to SQLite.
+
+The original test case uses SQLite just because it makes it simpler to reproduce the problem.
+
+Originally, we ran into this bug with connections against MySQL."
+234,http://jcssdev.pythonanywhere.com/bugs/63343/,cmb@php.net,Confirmed: <
+235,http://jcssdev.pythonanywhere.com/bugs/63343/,cmb@php.net,"This is a memory management issue, as setting `$st = null` hints
+at. Furthermore, assigning the second `$db->query()` to something
+else than `$st` (e.g. `$st1`) also lets the script succeed.
+
+The fix for PHP-7.0+ appears to be trivial (see PR #2112), but I
+don't know how to solve the problem for PHP-5.6."
+236,http://jcssdev.pythonanywhere.com/bugs/63343/,cmb@php.net,"Actually, Nikita's analysis[1] is spot on:
+
+| The problem as I see it is that destruction of one of the PDO
+| objects will always rollback the transaction on the inner object
+| (if a transaction is active). In this case this backfires because
+| in the meantime another transaction has been opened through a
+| different PDO object (but same inner object).
+
+It seems to me that this very issue is only an edge case of the
+more general issue that connections that are in use also can be
+reused (from the same request, but even worse also from other
+requests).  I.e. any global state (change) of the connection
+(inner object) can affect other code in unforeseen ways.
+
+[1] <"
+237,http://jcssdev.pythonanywhere.com/bugs/63343/,nikic@php.net,"> (from the same request, but even worse also from other requests)
+
+Is that really the case? IIRC the connection pooling is per process/thread, and there can only be one request per process/thread at a time."
+238,http://jcssdev.pythonanywhere.com/bugs/63343/,cmb@php.net,"> IIRC the connection pooling is per process/thread, and there can
+> only be one request per process/thread at a time.
+
+Oh, you're right! (otherwise there would be more serious issues)
+
+Still, I think users are better off to use a single PDO instance
+per persistent connection, in which case this issue would not
+happen."
+239,http://jcssdev.pythonanywhere.com/bugs/63343/,nikic@php.net,"> Still, I think users are better off to use a single PDO instance
+> per persistent connection, in which case this issue would not
+> happen.
+
+Yes, I agree. If people want to share a connection, they should use the same object."
+240,http://jcssdev.pythonanywhere.com/bugs/63380/,tstarling@php.net,
+241,http://jcssdev.pythonanywhere.com/bugs/63380/,rrichards@php.net,"There is a major problem with doing this and why I didn't end tying into the PHP 
+memory allocator. Depending upon setup, it is extremely likely to be able to hit 
+memory corruption and/or mix memory allocations between modules. i.e. using 
+mod_perl and mod_php will cause PHP to override the libxml memory handling 
+functions (which are global) and bleed into mod_perl (or any others that are 
+using libxml2) causing any number of results (crashes, security issues, etc..). 
+The only way to be able to do something like this would be to make it compile 
+time option which is disabled by default allowing those who know their 
+environment intimately can utilize this at their own risk, Don't know if you 
+want to write a patch for that or not. Otherwise I don't see any way this could 
+safely be added,"
+242,http://jcssdev.pythonanywhere.com/bugs/63380/,tstarling@php.net,"Do you know of a specific case where request-local allocations could bleed into mod_perl and cause memory corruption?
+
+I have reviewed all of libxml's global variables and ensured that they cannot be made to hold pointers to request-local allocations. The hooks are disabled at post-deactivate via a thread-local variable, so a perl request will not get request-local pointers from xmlMalloc() whether it runs in its own thread concurrently, or in the same thread as PHP but at a later time. TSRM_FETCH() should give default global variables, with local request allocation disabled, even if it is called from a thread where PHP has never been used.
+
+Either way, I would be happy to make this configurable, off by default, since the robustness of the solution depends on details of global pointer storage in libxml which may change in the future. So my patch does introduce a maintenance burden, with a risk of dangling pointers if that maintenance is not kept up to date. I'm just not keen on having the documentation say that there are known issues with interaction with other Apache modules unless that is truly the case."
+243,http://jcssdev.pythonanywhere.com/bugs/63380/,pajoye@php.net,"That is a very well known issues when mixed builds free and alloc same memory 
+areas.
+
+It is (almost) no problem when using libc allocation system but it is a (huge) 
+problem when php uses PHP memory manager and other libc or their own mm. It leads 
+to crashes, almost always."
+244,http://jcssdev.pythonanywhere.com/bugs/63380/,tstarling@php.net,"Unassigning from me since I'm not really interested in pursuing this. I have tried to explain the risks involved, and the precautions I have taken, but the comments I have received, here and on the pull request, indicate that I have not been successful. The feature will require maintenance, and obviously if nobody understands what the patch is doing and why, then nobody will be able to maintain it."
+245,http://jcssdev.pythonanywhere.com/bugs/63767/,pajoye@php.net,"Please post it at #36103 only, no need to open a new bug. 
+
+
+Thanks for your work!"
+246,http://jcssdev.pythonanywhere.com/bugs/63767/,pajoye@php.net,"Ok, reopen, a bit bad to have many bugs for the same issue, but Tony likes it ;-)"
+247,http://jcssdev.pythonanywhere.com/bugs/63767/,lior dot k at zend dot com,Any news about this ?
+248,http://jcssdev.pythonanywhere.com/bugs/63767/,kalle@php.net,"@lior
+
+As you got karma yourself, you can go ahead and commit the patch of yours, however like noted:
+
+- The code do/while code should be refactored into a function as its re-used
+- Please add a test to this fix
+
+Merging this to as low as PHP-7.0 should be perfectly acceptable, thanks!"
+249,http://jcssdev.pythonanywhere.com/bugs/63941/,derick@php.net,"What does this patch actually do? There is a lot of weirdness in it, and I thought the performance patch was already committed?"
+250,http://jcssdev.pythonanywhere.com/bugs/63941/,njaguar at gmail dot com,"This patch is a minor performance increase, as well as code cleanup.
+
+This applies changes to no longer require the usage of the int value that was caching whether timezones were previously verified, as well as combining usage into just *timezone instead of using both *timezone and *default_timezone for selecting between runtime and ini values. It also replaces a strlen() check with a ptr deference to speed up validation of *timezone checks (runtime cached timezone value that is verified valid). It significantly simplifies guess_timezone(). I also removed the extraneous DATEG(timezone) = NULL from the default timezone setter function, as immediately following it, it sets to the estrndup() value that the user provided.
+
+This concept was suggested by Nuno Lopes and Christopher Jones, whom asked me to write up this patch.
+
+Thanks!"
+251,http://jcssdev.pythonanywhere.com/bugs/64173/,salathe@php.net,"I don't see this as a documentation bug.  This filter effectively just calls 
+parse_url() on the value and looks to see if the resulting array makes some 
+sense. Running """
+252,http://jcssdev.pythonanywhere.com/bugs/64173/,retze dot faber at gmail dot com,"Changed to bug, cause I feel it should return false when I call it with"
+253,http://jcssdev.pythonanywhere.com/bugs/64173/,f21 dot groups at gmail dot com,Just ran into this as well. I think there some further checking should be done in filter_var as
+254,http://jcssdev.pythonanywhere.com/bugs/64173/,cmb@php.net,For reference: <
+255,http://jcssdev.pythonanywhere.com/bugs/64196/,nikic@php.net,"zend_object.guards is for property guards. Wouldn't you be clashing with the guard for $__clone here?
+
+Also, I'm not convinced we need to add this check at all. Recursion is a valid means of programming and as long as there is some termination condition everything's okay. Arguably with ""clone"" recursion makes rather little sense, but as it stands now we are open to recursion everywhere and I don't think we should go down the patch of saying ""recursion is okay here, but it's not okay here"". I mean, ""include"" for example can also be used recursively, even though you might argue that that's nearly as useless. Should we be adding checks everywhere, where we think recursion makes too little sense? I don't think so.
+
+The only (calls) that currently use recursion guarding are __get/__set and friends. For those it makes sense because the recursion guarding gives access to the underlying property, so it has some actual function (rather than just forbidding a programming pattern)."
+256,http://jcssdev.pythonanywhere.com/bugs/64196/,krakjoe@php.net,"__clone-2.patch addresses the clash ... and ensures proper functionality in all 
+situations, not just basic examples.
+
+we don't seem to be able to agree on whether such checks should be made, but at 
+least now there are no clashes and the patch is correct ..."
+257,http://jcssdev.pythonanywhere.com/bugs/64196/,nikic@php.net,"Not sure in what way the new patch resolves the clash. Doesn't it just move it from ""$foo->__clone"" towards ""$foo->{'$__clone'}""?"
+258,http://jcssdev.pythonanywhere.com/bugs/64196/,requinix@php.net,Still present in 7.2.
+259,http://jcssdev.pythonanywhere.com/bugs/64196/,dams@php.net,Still present in 7.3
+260,http://jcssdev.pythonanywhere.com/bugs/64280/,laruence@php.net,"you can refer to xdebug.max_nesting_level 
+
+anyway, implement such protection needs a lots of work,  yes we can simple add a 
+count to zend_call_function,  but there are many implicit function call, like 
+autoloading, toString etc.
+
+and for op_array execution, it is executed via zend_execute which is not this 
+""function call""
+
+so if we add such counter to zend_call_function, many confused question will be 
+come."
+261,http://jcssdev.pythonanywhere.com/bugs/64280/,bobwei9 at hotmail dot com,"I'd consider creating a int implicit_function_call_count to the EG and incrementing it in zend_call_function (in zend_execute_API.h) (before the next call to f.ex. zend_execute) and then decrement? And check then there for a limit and abort it necessary with an E_ERROR? Should not be loads of code?
+
+xdebug? Does everything have to be external to the core?"
+262,http://jcssdev.pythonanywhere.com/bugs/64280/,laruence@php.net,"I doubt whether this is necessary, it's a narrow wrong usage after all."
+263,http://jcssdev.pythonanywhere.com/bugs/64280/,bobwei9 at hotmail dot com,Exactly. But it is a) hard to find out what's going wrong (like a function produces an error which is also called accidentally in the error handler. How to find out the error without analyzing the globals of the core dump?) and b) more user friendly for debugging as you cannot suppose an user knows how to use gdb. I don't see any disadvantages here...
+264,http://jcssdev.pythonanywhere.com/bugs/64280/,valentiny510 at gmail dot com,"Related to this... the same happens when you call self::__construct inside __construct. Test code:
+
+class V {
+   function __construct( ) {
+      self::__construct( );
+   }
+}
+new V;"
+265,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,This bug is cascading to another:
+266,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"Sorry the second line above should read:
+
+$b = function(){ return ""b""; };"
+267,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"The issue here is that the runtime defined function keys should be unique, and the current algo does not generate unique keys.  There are many approaches that could be taken to remove such incorrect name clashes.  The patch that I've submitted add a sequence count to the key -- simple but sufficient to prevent this bug."
+268,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"Just to note that my patch is not strong enough when used with OPcache, since a simple static running count can fail when the interpreter is forked.  Better alternatives include 
+
+* some form of unique id, e.g. a UUID or uniquid(true)
+* a content based hash, such as md5file(__FILE__) -- though if this were to be adopted then it would be better always to generate this as part of the compile creating say __FILE_MD5__, though this would add a few % to the compile time.
+
+This all needs wider discussion of these issues on the Internals ML."
+269,http://jcssdev.pythonanywhere.com/bugs/64291/,dmitry@php.net,"Your second script prints ""a, a"" only with OPCache, because it caches the included temporary file. Without OPCache it prints the expected ""a, b"".
+
+I also don't think that the first script indicates a bug. The more functions you create the more memory it requires."
+270,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"What threw me was the botch with the temporary entries ""\0{closure}$filenane$offset"" are used in the EG(function_table).  This is as clear as mud.  When a file is compiled, a function table entry is created for each closue in the source.  This entry is never executed directly, but is used by the ZEND_DECLARE_LAMBDA_FUNCTION to construct the closure object which contains a deep copy of this zend_function record.  It is this copy that used when the closure is called.  So long as the ZEND_DECLARE_LAMBDA_FUNCTION
+are executed within the same scope as the compile, this should normally be unique, but it is quite easy to construct a test case which the unique assumption fails: 
+
+--TEST--
+ISSUE #65915 Temporary function entries for closures are not unique
+--INI--
+opcache.enable=0
+--SKIPIF--
+--FILE--
+<?php
+$tmp = tempnam(__DIR__, 'test');
+foreach (['a','b'] as $f) {
+  file_put_contents($tmp, ""<?php function $f() {return function(){ return '$f'; };}"");
+  echo file_get_contents($tmp), ""\n"";
+  require $tmp;
+}
+$a = a();
+$b = b();
+printf( ""%s, %s\n "", $a(), $b());
+unlink($tmp);
+?>
+--CLEAN--	
+--EXPECT--
+<?php function a() {return function(){ return 'a'; };}
+<?php function b() {return function(){ return 'b'; };}
+a, b"
+271,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"And here's the eval version:
+
+--TEST--
+ISSUE #64291 Temporary function entries for closures are not unique
+--INI--
+opcache.enable=1
+--FILE--
+<?php
+foreach (['a','b'] as $f) {
+  $tmp = ""function $f() {return function(){ return '$f'; };}\n"";
+  eval($tmp);
+  echo $tmp;
+}
+$a = a();
+$b = b();
+printf( ""%s, %s\n "", $a(), $b());
+?>
+--EXPECT--
+function a() {return function(){ return 'a'; };}
+function b() {return function(){ return 'b'; };}
+a, b"
+272,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"Sorry, the above should read opcache.enable=0 though the failure is the same for opcache enabled and not enabled in the eval case."
+273,http://jcssdev.pythonanywhere.com/bugs/64291/,Terry at ellisons dot org dot uk,"Dmitry, 
+
+I have just realised that this ""mangled names should be unique"" issue applied to any runtime bound function or class as the following -- albeit perverse example shows:
+
+--TEST--
+ISSUE #65915A Temporary class entries are not unique
+--INI--
+opcache.enable=0
+--SKIPIF--
+--FILE--
+<?php
+$tmp = tempnam(__DIR__, 'test');
+foreach (['a','b'] as $f) {
+  file_put_contents($tmp, <<<END
+<?php 
+  function $f() {
+    class Hello { const WORLD = ""Hello world from $f\\n""; }
+  }
+END
+);
+  require $tmp;
+}
+a();
+echo Hello::WORLD;
+unlink($tmp);
+?>
+--CLEAN--	
+--EXPECT--
+Hello world from a
+
+Here the two functions both compile a class with a mangled name ""\0$class$filename$string_addr"" which is the same for the a() and b() copies
+so b() version overwrites the a() one, and the DECLARE_CLASS opcode in a() incorrecly binds to the wrong class, hence Hello::WORLD incorrectly prints out the ""from b"" version.
+
+However, I suspect in practice that this is unlikely to manifest itself in real word apps."
+274,http://jcssdev.pythonanywhere.com/bugs/64291/,ulrich dot eckhardt at base-42 dot de,"I'm getting bitten by this bug, too. My use case is basically that I'm generating and eval()'ing code. Since this is not in a one-shot HTTP server process environment but in a longer running process that caches the generated code for performance reasons, this causes various failures that depend on the order in which requests are made.
+
+Using Terry's patch on PHP 5.4.24 on Debian/AMD64 caused the problem to go away, my services now run stable. What's keeping you from applying this patch (apart from the fact that it mixes tabs/spaces)?"
+275,http://jcssdev.pythonanywhere.com/bugs/64346/,laruence@php.net,"confirm this change. this is due to the 5.4 performance improvement: ""literal 
+cache""
+
+@dmitry, maybe we should not cache the function entry for INIT_NS_FCALL?
+
+thanks"
+276,http://jcssdev.pythonanywhere.com/bugs/64346/,laruence@php.net,"or maybe we should document this behavior, since disable it will bring performance 
+issue"
+277,http://jcssdev.pythonanywhere.com/bugs/64346/,laruence@php.net,"@gen the main brief is, when you first call to \Foo\Bar,  the 'time' constant in 
+the \Foo\Bar function, will bundle to ""time function"", in the first time , it 
+obviously will be bundled to \time.
+
+then when you sencond call to it. PHP will use that cache instead of look up in 
+function table again for ""time"" function, to increase performance..
+
+so, if we disable the cache, then performance slowdown...
+
+what do you think?  a workaround is define a Foo\Bar2, after you eval, you call 
+to it, then it will bundled to \Foo\Time.."
+278,http://jcssdev.pythonanywhere.com/bugs/64346/,gen dot work at gmail dot com,"The main issue I see is that is_callabe() is lying. It says that '\Foo\bar' is callable, but in fact it's not. So just document this behavior is not enough imo, is_callabe should be tweaked to reflect actual status.
+
+And I don't quite understand suggested workaraund. Could you please give a simple example? In my usecase I try to mock time function to avoid sleep() calls:"
+279,http://jcssdev.pythonanywhere.com/bugs/64346/,gen dot work at gmail dot com,'\Foo\bar' -> '\Foo\time' in my prev comment
+280,http://jcssdev.pythonanywhere.com/bugs/64346/,dmitry@php.net,"I suppose the bug has to be fixed.
+
+The problem that the fix will slowdown each call to unqualified function from a namespace :(
+
+I'm not sure if we like to do it..."
+281,http://jcssdev.pythonanywhere.com/bugs/64346/,Terry at ellisons dot org dot uk,"Dmitry,
+
+I came across this one myself (see"
+282,http://jcssdev.pythonanywhere.com/bugs/64346/,Terry at ellisons dot org dot uk,"BTW, the title of this bug is misleading.  It can still occur for *any* INCLUDE_OR_EVAL of a namespaced override of a builtin function, eg.
+
+namespace fred;
+some_function_which_executes_builtin();
+include ""some_include_in_namespace_fred_which overrides_same_builtin();
+some_function_which_executes_builtin();"
+283,http://jcssdev.pythonanywhere.com/bugs/64346/,Terry at ellisons dot org dot uk,"Damn, why can't you edit your own comments :-)  The include should read:
+
+include ""some_include_in_namespace_fred_which overrides_same_builtin.php"";
+
+of course."
+284,http://jcssdev.pythonanywhere.com/bugs/64346/,showerheadsuk at hotmail dot com,"The same problem also applies to constants when accessing from a namespaced class - if the first the time the constant is accessed it is defined globally but not in the local namespace, then that global value will be used for all future accesses even if it is later defined in the local namespace.
+
+Since overriding global functions / constants is mostly used just for testing, could this be added as a php.ini option, like 
+literal_cache_disable = 1"
+285,http://jcssdev.pythonanywhere.com/bugs/64346/,shiranai7 at hotmail dot com,"Would it also be expensive to invalidate specific (not all) keys in the ""literal cache"" each time a function or a constant is defined?
+
+I'd avoid a global INI setting if possible."
+286,http://jcssdev.pythonanywhere.com/bugs/64346/,syl dot fabre at gmail dot com,Still present in 7.3.0-beta2:
+287,http://jcssdev.pythonanywhere.com/bugs/64531/,phplists at stanvassilev dot com,"I hate when that happens, although I guess I'm clear:
+
+Typo in Expected Result: ""Fetching should cause duplicate"";
+should be:""Fetching should NOT cause duplicate"";
+
+Typo in EXAMPLE2: ""Another used has encountered an issue like""
+should be: ""Another user has encountered an issue like"""
+288,http://jcssdev.pythonanywhere.com/bugs/64531/,frozenfire@php.net,The related source is:
+289,http://jcssdev.pythonanywhere.com/bugs/64531/,phplists at stanvassilev dot com,"Before people start recommending a documentation ""fix"", be aware that I have two 
+examples.
+
+The first use case is solved by using exec(). The second is solved by nothing, 
+the query is evaluated twice. Those are just two examples demonstrating the same 
+issue.
+
+Don't try to fix my examples, try to fix the issue. The culprit seems to be that 
+_step is executed for the query once on query(), but then it's executed all over 
+again on first fetch, starting at row1 again.
+
+A proposed solution fixing all side effects would be to run step() on query() 
+and cache the fetched result, then return it on first fetch, then call step() on 
+second fetch etc.:
+
+query(...); // call sqlite3_step, save row1
+fetchArray(...); // return saved row1
+fetchArray(...); // call sqlite3_step, return row2
+fetchArray(...); // call sqlite3_step, return row3
+fetchArray(...); // call sqlite3_step, return row4
+..."
+290,http://jcssdev.pythonanywhere.com/bugs/64531/,phplists at stanvassilev dot com,"I've been discussing this in #PHP.PECL, with auroraeos and others and basically 
+the problem is caused by the OOP interface in the binding.
+
+The binding introduces extra logic so query() in PHP can return a resultset 
+object or false etc.
+
+In order to know what to return, query() calls sqlite3_step() which fetches the 
+first row of the result.
+
+So far so good. Here's the problem:
+
+The binding then *resets* the query so the first call to fetchArray() returns 
+row1 again. This is not library behavior, it's binding behavior that's 
+additional logic.
+
+This causes row1 to be computed twice, and queries to run twice etc.
+
+The solution for solving this without introducing BC breaks and interface 
+breaks, is for the binding to store the row it fetched during query() with the 
+resultset, as outlined in my previous comment, and return it on first call to 
+fetchArray, without calling step.
+
+On subsequent calls to fetchArray(), step is called to fetch the other rows.
+
+Either way you look at it, the binding added behavior that isn't in the original 
+library, and this is causing performance issues and side effects. The 
+responsible thing is to keep the PHP OOP interface compatible, but fix the 
+performance issues and side effects.
+
+And what I described is how to do it..."
+291,http://jcssdev.pythonanywhere.com/bugs/64531/,yuri dot kanivetsky at gmail dot com,"I've run into it trying to do:
+
+    function sq($query, $params = array()) {
+        if ($params) {
+            $stmt = sdb()->prepare($query);
+            if ( ! $stmt) {
+                die(""sqlite: "" . sdb()->lastErrorMsg());
+            }
+            foreach ($params as $param) {
+                $r = call_user_func_array(array($stmt, 'bindValue'), $param);
+                if ( ! $r) {
+                    die(""sqlite: "" . sdb()->lastErrorMsg());
+                }
+            }
+            $res = $stmt->execute();
+            if ( ! $res) {
+                die(""sqlite: "" . sdb()->lastErrorMsg());
+            }
+        } else {
+            $res = sdb()->query($query);
+            if ( ! $res) {
+                die(""sqlite: "" . sdb()->lastErrorMsg());
+            }
+        }
+        $r = array();
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $r[] = $row;
+        }
+        return $r;
+    }
+
+Made it work by wrapping the last part in `if ($res->numColumns()) {`:
+
+        ...
+        }
+        if ($res->numColumns()) {
+            $r = array();
+            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                $r[] = $row;
+            }
+            return $r;
+        }
+    }"
+292,http://jcssdev.pythonanywhere.com/bugs/64531/,dupa at dupa dot com,"Same problem here, duplicate inserts with ""query"" method."
+293,http://jcssdev.pythonanywhere.com/bugs/64531/,cmb@php.net,Confirmed: <
+294,http://jcssdev.pythonanywhere.com/bugs/64531/,thomas dot loch at fusion-core dot net,I've just encountered this issue on Linux and Version 5.6.30 while using a similar generic wrapper around prepare/bind*/execute(). Is there still intent to fix this after five years?
+295,http://jcssdev.pythonanywhere.com/bugs/64531/,cmb@php.net,"While the fix for SQLite3::query() is trivial, a general fix for
+SQLite3Stmt::execute() is impossible, since it is allowed to
+::execute() the same statement multiple times, which might trigger
+sqlite3_reset()s at unexpected times (see, for instance,"
+296,http://jcssdev.pythonanywhere.com/bugs/64531/,svnpenn at gmail dot com,"I am new to PHP SQLite so at first I was disappointed to find that ""procedural style"" functions were dropped with PHP SQLite3. Compare:
+
+-"
+297,http://jcssdev.pythonanywhere.com/bugs/64531/,antoni at friki dot cat,"Hi,
+
+today I've faced that problem.
+
+Here my patch:
+--- php-7.4.2/ext/sqlite3/sqlite3.c	2020-01-21 12:35:21.000000000 +0100
++++ php-7.4.2-sqlite3fixed/ext/sqlite3/sqlite3.c	2020-01-31 22:12:56.599653191 +0100
+@@ -612,8 +612,11 @@
+ 	return_code = sqlite3_step(result->stmt_obj->stmt);
+ 
+ 	switch (return_code) {
+-		case SQLITE_ROW: /* Valid Row */
+ 		case SQLITE_DONE: /* Valid but no results */
++                {
++			result->complete = 1;
++                }
++		case SQLITE_ROW: /* Valid Row */
+ 		{
+ 			php_sqlite3_free_list *free_item;
+ 			free_item = emalloc(sizeof(php_sqlite3_free_list));
+@@ -624,6 +627,7 @@
+ 			break;
+ 		}
+ 		default:
++			result->complete = 1;
+ 			if (!EG(exception)) {
+ 				php_sqlite3_error(db_obj, ""Unable to execute statement: %s"", sqlite3_errmsg(db_obj->db));
+ 			}
+@@ -713,6 +717,9 @@
+ 	return_code = sqlite3_step(stmt);
+ 
+ 	switch (return_code) {
++	        php_sqlite3_result *result_obj;
++	        zval *object = ZEND_THIS;
++	        result_obj = Z_SQLITE3_RESULT_P(object);
+ 		case SQLITE_ROW: /* Valid Row */
+ 		{
+ 			if (!entire_row) {
+@@ -730,6 +737,8 @@
+ 		}
+ 		case SQLITE_DONE: /* Valid but no results */
+ 		{
++			result_obj->complete = 1;
++
+ 			if (!entire_row) {
+ 				RETVAL_NULL();
+ 			} else {
+@@ -738,10 +747,12 @@
+ 			break;
+ 		}
+ 		default:
+-		if (!EG(exception)) {
+-			php_sqlite3_error(db_obj, ""Unable to execute statement: %s"", sqlite3_errmsg(db_obj->db));
+-		}
+-		RETVAL_FALSE;
++		        result_obj->complete = 1;
++
++		        if (!EG(exception)) {
++		        	php_sqlite3_error(db_obj, ""Unable to execute statement: %s"", sqlite3_errmsg(db_obj->db));
++		        }
++		        RETVAL_FALSE;
+ 	}
+ 	sqlite3_finalize(stmt);
+ }
+@@ -1844,14 +1855,16 @@
+ 
+ 	return_code = sqlite3_step(stmt_obj->stmt);
+ 
++	sqlite3_reset(stmt_obj->stmt);
++	object_init_ex(return_value, php_sqlite3_result_entry);
++	result = Z_SQLITE3_RESULT_P(return_value);
+ 	switch (return_code) {
+-		case SQLITE_ROW: /* Valid Row */
+ 		case SQLITE_DONE: /* Valid but no results */
++                {
++			result->complete = 1;
++                }
++		case SQLITE_ROW: /* Valid Row */
+ 		{
+-			sqlite3_reset(stmt_obj->stmt);
+-			object_init_ex(return_value, php_sqlite3_result_entry);
+-			result = Z_SQLITE3_RESULT_P(return_value);
+-
+ 			result->is_prepared_statement = 1;
+ 			result->db_obj = stmt_obj->db_obj;
+ 			result->stmt_obj = stmt_obj;
+@@ -1861,9 +1874,11 @@
+ 			break;
+ 		}
+ 		case SQLITE_ERROR:
++			result->complete = 1;
+ 			sqlite3_reset(stmt_obj->stmt);
+ 
+ 		default:
++			result->complete = 1;
+ 			if (!EG(exception)) {
+ 				php_sqlite3_error(stmt_obj->db_obj, ""Unable to execute statement: %s"", sqlite3_errmsg(sqlite3_db_handle(stmt_obj->stmt)));
+ 			}
+@@ -1939,6 +1954,10 @@
+ 		return;
+ 	}
+ 
++	if (result_obj->complete) {
++		RETURN_FALSE;
++	}
++
+ 	RETURN_LONG(sqlite3_column_count(result_obj->stmt_obj->stmt));
+ }
+ /* }}} */
+@@ -1958,6 +1977,11 @@
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS(), ""l"", &column) == FAILURE) {
+ 		return;
+ 	}
++
++	if (result_obj->complete) {
++		RETURN_FALSE;
++	}
++
+ 	column_name = (char*) sqlite3_column_name(result_obj->stmt_obj->stmt, column);
+ 
+ 	if (column_name == NULL) {
+@@ -2007,6 +2031,10 @@
+ 		return;
+ 	}
+ 
++        if (result_obj->complete==1) {
++		return;
++        }
++
+ 	ret = sqlite3_step(result_obj->stmt_obj->stmt);
+ 	switch (ret) {
+ 		case SQLITE_ROW:
+@@ -2043,6 +2071,7 @@
+ 			break;
+ 
+ 		default:
++			result_obj->complete = 1;
+ 			php_sqlite3_error(result_obj->db_obj, ""Unable to execute statement: %s"", sqlite3_errmsg(sqlite3_db_handle(result_obj->stmt_obj->stmt)));
+ 	}
+ }"
+298,http://jcssdev.pythonanywhere.com/bugs/64531/,antoni at friki dot cat,"Here an PHP example reproducing the weird issue.
+
+Find some commented out alternatives to avoid problems with current php-sqlite3 implementation:"
+299,http://jcssdev.pythonanywhere.com/bugs/64531/,antoni at friki dot cat,"I think that small patch should fix most problems on fetchArray() usage.
+It's not a breaking change as no one expects re-run insert/update/create statements using a function to acquire a row of data. IMAO
+
+--- php-7.4.2/ext/sqlite3/sqlite3.c	2020-01-21 12:35:21.000000000 +0100
++++ php-7.4.2-sqlite3fixed2/ext/sqlite3/sqlite3.c	2020-01-31 23:37:17.449123405 +0100
+@@ -2007,6 +2007,10 @@ PHP_METHOD(sqlite3result, fetchArray)
+ 		return;
+ 	}
+ 
++	if (sqlite3_column_count(result_obj->stmt_obj->stmt) == 0) {
++                return;
++        }
++
+ 	ret = sqlite3_step(result_obj->stmt_obj->stmt);
+ 	switch (ret) {
+ 		case SQLITE_ROW:"
+300,http://jcssdev.pythonanywhere.com/bugs/65069/,ab@php.net,"Thank you for this bug report. To properly diagnose the problem, we
+need a short but complete example script to be able to reproduce
+this bug ourselves. 
+
+A proper reproducing script starts with <?php and ends with ?>,
+is max. 10-20 lines long and does not require any external 
+resources such as databases, etc. If the script requires a 
+database to demonstrate the issue, please make sure it creates 
+all necessary tables, stored procedures etc.
+
+Please avoid embedding huge scripts into the report.
+
+Tried your snippet on CLI, but there's no behaviour you describe. I see a proper listing in both 
+cases. There must be something else causing this."
+301,http://jcssdev.pythonanywhere.com/bugs/65069/,jamie at media32 dot ca,"I think I can reproduce this. It only happens when the GlobIterator is used 
+inside the destructor, and the script is run using Apache/Mod PHP (running via 
+CLI returns the correct results).
+
+<?php
+error_reporting(-1);
+ini_set('display_errors', 1);
+ini_set('open_basedir', __DIR__);
+
+class Globber
+{
+	public function __destruct()
+	{
+		var_dump(__DIR__);
+		var_dump(glob(__DIR__ . '/*.php'));
+		var_dump(iterator_to_array(new \GlobIterator(__DIR__ 
+.'/*.php')));
+	}
+}
+
+$globber = new Globber;
+?>
+
+When running via Apache/Mod PHP an UnexpectedValueException is thrown."
+302,http://jcssdev.pythonanywhere.com/bugs/65069/,seld@php.net,"On CLI I also get the same problem, Win7 x64 + PHP 5.5.0RC3 or 5.4.3. 
+
+With PHP 5.3.5 and 5.4.6 on linux it works fine though. Seems it might be windows specific. Although as Jamie says it can maybe be triggered in other ways than using windows."
+303,http://jcssdev.pythonanywhere.com/bugs/65069/,jamie at media32 dot ca,"I forgot to mention in my previous comment that I'm running PHP 5.4.14 on OSX 
+Lion."
+304,http://jcssdev.pythonanywhere.com/bugs/65069/,ab@php.net,"Ok, inside destructor it reproducible for me on windows CLI, that's already 
+something one can debug :) But the original snippet still doesn't fail that way. 
+And trying DirectoryIterator at that play it works ... so most likely GlobIterator 
+is broken somehow."
+305,http://jcssdev.pythonanywhere.com/bugs/65069/,ab@php.net,"Ok, the issue is much more complicated than it looks. This is a very tricky case 
+because the glob pattern check against the open_basedir value obviously makes no 
+sense. The implementation of the glob function is simply to
+
+- expand the pattern
+- iterate checking for basedir restriction on every item
+- discard result and return false if one of them was not within basedir
+
+
+What's going on in GlobIterator is to check the basedir against the pattern in 
+__construct, that obviously will never work properly. Also, glob extends 
+Filesystem iterator, only __construct() and count() methods are implemented. 
+
+Two solutions come in my mind:
+
+- do the same teh glob() function does, do the work in construct and throw 
+exception if one of the paths isn't allowed (but that means doing the work 
+twice), so no go
+- impement the necessary methods in GlobIterator, like current(), next(), etc. 
+.. this seems more plausible, however the situation where a value isn't within 
+basedir, what would for instance current() return? false? ... 
+
+Looks like a big behavior change anyway. Any ideas for a better fix?
+
+Thanks"
+306,http://jcssdev.pythonanywhere.com/bugs/65069/,ab@php.net,"Ah, just to mention, GlobIterator is the same as DirectoryIterator('glob://....') 
+... so that on is broken too."
+307,http://jcssdev.pythonanywhere.com/bugs/65154/,felipe@php.net,"Feel free to attach your patch to the report.
+
+Thanks."
+308,http://jcssdev.pythonanywhere.com/bugs/65154/,bholbrook at bomgar dot com,"Sorry for my late response :)
+
+Here is the patch I am using against the current master."
+309,http://jcssdev.pythonanywhere.com/bugs/65398/,mnikulin at plesk dot com,I have tried the patch
+310,http://jcssdev.pythonanywhere.com/bugs/65600/,requinix@php.net,"Using the READ_AHEAD flag will enable the behavior you're expecting. I don't know 
+if that requirement is intentional or necessary."
+311,http://jcssdev.pythonanywhere.com/bugs/65600/,kentaro at ranvis dot com,"Thank you. It worked as expected with setFlags(SplFileObject::READ_AHEAD) before rewind().
+I'll wait for further comment to see if this is a requirement (it seems to be.)"
+312,http://jcssdev.pythonanywhere.com/bugs/65600/,cmb@php.net,"Consider:
+
+    <?php
+    $f = new SplFileObject('php://temp', 'w+');
+    $f->fwrite(""line 1\nline 2\nline 3"");
+    $f->rewind();
+    $f->next();
+    $f->next();
+    $f->next();
+    var_dump($f->key());
+    var_dump($f->current());
+
+While key() says we're at line 3, current() returns the first
+line. That doesn't make sense; either key() should return 1, or
+current() should return the third line."
+313,http://jcssdev.pythonanywhere.com/bugs/65600/,cmb@php.net,Forgot: see <
+314,http://jcssdev.pythonanywhere.com/bugs/66013/,sixd@php.net,It would be helpful to list the 'configure' options and build environment (compilers etc)
+315,http://jcssdev.pythonanywhere.com/bugs/66013/,Pete_Wall at symantec dot com,"Both Solaris 10 x86 and Sparc:
+CPPFLAGS="" -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64""
+
+./configure --disable-cgi --enable-cli --prefix=""/path/to/php""
+    --with-libxml-dir=""/path/to/libxml"" --with-openssl=shared,""/path/to/openssl""
+    --with-zlib=""/path/to/zlib"" --with-curl=shared,""/path/to/curl""
+    --with-config-file-path=/path/to/cfgfile --with-layout=GNU
+    --with-regex=php --with-tsrm-pthreads --disable-rpath --disable-sysvsem --disable-sysvshm
+    --disable-sysvmsg --disable-bcmath --disable-ctype --disable-exif --disable-spl --disable-ftp
+    --disable-shmop --enable-tokenizer --disable-static --enable-posix=shared --enable-session=shared
+    --enable-sockets=shared --enable-xml=shared --enable-pcntl=shared --enable-dom --without-mm
+    --without-gettext --without-iconv --without-sqlite --without-mime-magic --without-mysql --without-sybase-ct
+    --without-gdbm --without-db4 --without-cdb --without-pear --without-xsl --disable-debug
+    --with-pcre-dir=""/path/to/pcre"" --with-pcre-regex
+
+
+Solaris 10 x86:
+CFLAGS="" -m64""
+$ gcc -v
+Reading specs from /usr/sfw/lib/gcc/i386-pc-solaris2.10/3.4.3/specs
+Configured with: /builds/sfw10-gate/usr/src/cmd/gcc/gcc-3.4.3/configure --prefix=/usr/sfw --with-as=/usr/sfw/bin/gas --with-gnu-as --with-ld=/usr/ccs/bin/ld --without-gnu-ld --enable-languages=c,c++ --enable-shared
+Thread model: posix
+gcc version 3.4.3 (csl-sol210-3_4-branch+sol_rpath)
+
+
+Solaris 10 Sparc:
+CFLAGS=""""
+$ gcc -v
+Reading specs from /usr/local/lib/gcc/sparc-sun-solaris2.10/3.4.6/specs
+Configured with: ../configure --with-as=/usr/ccs/bin/as --with-ld=/usr/ccs/bin/ld --enable-shared --enable-languages=c,c++,f77
+Thread model: posix
+gcc version 3.4.6"
+316,http://jcssdev.pythonanywhere.com/bugs/66013/,phperror at kim dot net,"This error occurs when compiling php 5.5.5 on Omnios which is
+a continuation of OpenSolaris."
+317,http://jcssdev.pythonanywhere.com/bugs/66013/,rob dot de dot langhe at twistfare dot be,"And it also happens on (true) Solaris-10 compiling PHP 5.5.6 on SPARC :
+
+/bin/bash /our_base_dir/src/php-5.5.6/libtool --silent --preserve-dup-deps --mode=compile /our_base_dir/bin/gcc  -Iext/sockets/ -I/our_base_dir/src/php-5.5.6/ext/sockets/ -DPHP_ATOM_INC -I/our_base_dir/src/php-5.5.6/include -I/our_base_dir/src/php-5.5.6/main -I/our_base_dir/src/php-5.5.6 -I/our_base_dir/src/php-5.5.6/ext/date/lib -I/our_base_dir/src/php-5.5.6/ext/ereg/regex -I/usr/include/libxml2 -I/our_base_dir/include -I/our_base_dir/src/php-5.5.6/ext/sqlite3/libsqlite -I/our_base_dir/src/php-5.5.6/TSRM -I/our_base_dir/src/php-5.5.6/Zend  -D_POSIX_PTHREAD_SEMANTICS -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT  -m32 -I/our_base_dir/include -fvisibility=hidden -DZTS  -c /our_base_dir/src/php-5.5.6/ext/sockets/sockaddr_conv.c -o ext/sockets/sockaddr_conv.lo
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c: In function 'from_zval_write_control_array':
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:973:8: error: 'struct msghdr' has no member named 'msg_control'
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:974:8: error: 'struct msghdr' has no member named 'msg_controllen'
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c: In function 'to_zval_read_control_array':
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:1037:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:1039:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c: In function 'from_zval_write_controllen':
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:1146:8: error: 'struct msghdr' has no member named 'msg_control'
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:1147:8: error: 'struct msghdr' has no member named 'msg_controllen'
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c: In function 'to_zval_read_msghdr':
+/our_base_dir/src/php-5.5.6/ext/sockets/conversions.c:1248:34: error: 'struct msghdr' has no member named 'msg_flags'
+
+The flags used :
+./configure --with-apxs2=/our_base_dir/bin/apxs --with-config-file-path=/our_base_dir/etc --prefix=/our_base_dir --with-gd=/our_base_dir --with-png-dir=/our_base_dir --with-xpm-dir=no --disable-phar --enable-sockets --with-zlib --without-pear --without-iconv"
+318,http://jcssdev.pythonanywhere.com/bugs/66013/,meths at btinternet dot com,"Still happens with 5.5.7 on SmartOS so is probably affecting all illumos and Solaris based systems.
+
+Also duplicate of"
+319,http://jcssdev.pythonanywhere.com/bugs/66013/,christian dot lachner at gmail dot com,"On Solaris 5.11, the problem's source is in /usr/include/sys/socket.h where the struct 'msghdr' is declared. The missing two elements '*msg_control' and 'msg_controllen' are IFDEFed out and can only be enabled by setting __lint, _XPG4_2 or _KERNEL. However, neither of these three values is set by the configure-script.
+
+As a result, using export EXTRA_CFLAGS=""-D__lint"" makes socket.so as well as the rest of php build fine. Don't use EXTRA_CFLAGS=""-D_XPG4_2"" as it probably breaks other stuff.
+
+Dunno about older Solaris releases though."
+320,http://jcssdev.pythonanywhere.com/bugs/66013/,rainer dot jung at kippdata dot de,"My workaround is adding
+
+#define _XOPEN_SOURCE 500
+#define _XOPEN_SOURCE_EXTENDED 1
+#define __EXTENSIONS__
+
+at the top of the files ext/sockets/conversions.c and ext/sockets/sendrecvmsg.c."
+321,http://jcssdev.pythonanywhere.com/bugs/66013/,alp at rsu dot ru,"One more workaround, which we use in OpenIndiana /hipster:"
+322,http://jcssdev.pythonanywhere.com/bugs/66013/,g dot fischer at ah-consulting dot net,"this is still present in 5.6.11, solaris 11.2, sunpro 5.12.
+5.3.x and 5.4.x are fine so it seems it was re-introduced in 5.5.x.
+also see"
+323,http://jcssdev.pythonanywhere.com/bugs/66013/,eugene at zhegan dot in,Still there in 5.6.21 / Solaris 11.2.
+324,http://jcssdev.pythonanywhere.com/bugs/66013/,norm dot jacobs at oracle dot com,"FWIW, _XPG4_2 is an internal implementation detail in Solaris and should not be used directly, instead defining _XOPEN_SOURCE >=500 is a possible option.  See the standards(5) man page and/or sys/feature_tests.h on Solaris for more detail."
+325,http://jcssdev.pythonanywhere.com/bugs/66013/,cmb@php.net,"Active support for PHP 5 has ended quite a while ago. Does this issue persist
+with current PHP 7 versions?"
+326,http://jcssdev.pythonanywhere.com/bugs/66013/,g dot fischer at ah-consulting dot net,"yes, it still happens with php 7."
+327,http://jcssdev.pythonanywhere.com/bugs/66013/,glen dot r dot kriekenbeck at kp dot org,"On Solaris 10, using the OpenCSW gcc 4.9.0 toolchain and prerequisite open source libraries, I successfully compiled ext/sockets/conversions.c and ext/sockets/sendrecvmsg.c by prepending:
+
+#define _XOPEN_SOURCE 600
+#define __EXTENSIONS__
+
+to the top of each file."
+328,http://jcssdev.pythonanywhere.com/bugs/66013/,glen dot r dot kriekenbeck at kp dot org,"I'm sorry, missed some important details:
+
+Version: php-7.3.25
+Env: 
+PATH=/opt/csw/bin:/usr/bin:/bin
+CC=""/opt/csw/bin/gcc""
+CFLAGS=""-std=gnu99 -fPIC -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64""
+LDFLAGS=""-L/opt/csw/lib -R/opt/csw/lib""
+MAKE=""/opt/csw/bin/gmake""
+SED=""/opt/csw/bin/gsed""
+
+Configuration:
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/lib --with-apxs2=/opt/csw/bin/apxs --with-ldap=/opt/csw \
+ --with-openssl=/opt/csw --with-openssl-dir=/opt/csw/ \
+ --with-mysqli --with-pdo-mysql --with-pdo-mysql  --with-zlib --with-zlib-dir=/opt/csw --with-libzip=/opt/csw \
+ --with-iconv-dir=/opt/csw --with-pcre-dir=/opt/csw --with-libxml-dir=/opt/csw --with-curl=/opt/csw --with-openssl \
+ --with-webp-dir=/opt/csw --with-jpeg-dir=/opt/csw --with-xpm-dir=/opt/csw \
+ --with-openssl-dir=/opt/csw/lib/ --with-gd --with-freetype-dir=/opt/csw --with-gnu-ld --enable-shared --enable-mbstring \
+ --enable-exif --enable-sockets --enable-soap --enable-zip  --enable-ftp --enable-mysqlnd --disable-zend-signals --disable-static"
+329,http://jcssdev.pythonanywhere.com/bugs/66019/,cmb@php.net,Confirmed: <
+330,http://jcssdev.pythonanywhere.com/bugs/66019/,derick@php.net,"@cmb, your patch breaks:
+
+derick@gargleblaster:~/dev/derickr-timelib$ ./tests/tester-parse-string ""14/10/2006""
+E=2 TS: 0 | -99999-10-20 14:00:00
+Errors found while parsing '14/10/2006'
+E Unexpected character @ pos 2 (char=[/])
+E Double time specification @ pos 8 (char=[0])
+
+derick@gargleblaster:~/dev/derickr-timelib$ ./tests/tester-parse-string ""13/10/2006""
+E=2 TS: 0 | -99999-10-20 13:00:00
+Errors found while parsing '13/10/2006'
+E Unexpected character @ pos 2 (char=[/])
+E Double time specification @ pos 8 (char=[0])
+
+So unless you're really invested in this, I'm likely to close this."
+331,http://jcssdev.pythonanywhere.com/bugs/66019/,cmb@php.net,"Ah, yes, this patch is way to general; it doesn't make sense to
+support stand alone hours.  Still, I think the date parser should
+support ISO 8061 YYYY-MM-DDTHH.  I submitted a draft PR:
+<"
+332,http://jcssdev.pythonanywhere.com/bugs/66095/,devurandom at gmx dot net,"I can reproduce this using PHP 5.5.9 on Apache 2.4.7.
+
+See-Also:"
+333,http://jcssdev.pythonanywhere.com/bugs/66095/,devurandom at gmx dot net,See-Also:
+334,http://jcssdev.pythonanywhere.com/bugs/66095/,rossi dot f at inwind dot it,"First of all I'm experiencing the same problem with my system, I'm using PHP 5.5.20 and apache 2.2.27 with an external libmagic (version 5.21). Up to now the only way to survive has been to keep the system libmagic at version 5.11 but this has implications on the secuiry!
+
+Is there any PHP developer thinking about how to solve this issue?
+
+I have tried to apply the patch here proposed but it doesn't seem to work because I get errors when compiling the code, see the attached log."
+335,http://jcssdev.pythonanywhere.com/bugs/66095/,rossi dot f at inwind dot it,"I cannot find a way to upload the full log, here is a short piece:
+
+ext/fileinfo/libmagic/.libs/apprentice.o:(.rodata+0x0): multiple definition of `php_magic_database'
+ext/fileinfo/.libs/fileinfo.o:(.rodata+0xe00): first defined here
+ext/fileinfo/libmagic/.libs/apprentice.o:(.rodata+0x27c590): multiple definition of `file_nnames'
+ext/fileinfo/.libs/fileinfo.o:(.rodata+0x27d390): first defined here
+ext/fileinfo/libmagic/.libs/apprentice.o:(.rodata+0x27c598): multiple definition of `file_nformats'
+ext/fileinfo/.libs/fileinfo.o:(.rodata+0x27d398): first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_tole2':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:159: multiple definition of `cdf_tole2'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:159: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_tole4':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:165: multiple definition of `cdf_tole4'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:165: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_tole8':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:171: multiple definition of `cdf_tole8'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:171: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_swap_header':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:179: multiple definition of `cdf_swap_header'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:179: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `memcpy':
+/usr/include/bits/string3.h:51: multiple definition of `cdf_unpack_header'
+ext/fileinfo/.libs/fileinfo.o:/usr/include/bits/string3.h:51: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_swap_dir':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:232: multiple definition of `cdf_swap_dir'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:232: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_swap_class':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:248: multiple definition of `cdf_swap_class'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:248: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `memcpy':
+/usr/include/bits/string3.h:51: multiple definition of `cdf_unpack_dir'
+ext/fileinfo/.libs/fileinfo.o:/usr/include/bits/string3.h:51: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_header':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:322: multiple definition of `cdf_read_header'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:322: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_sector':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:356: multiple definition of `cdf_read_sector'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:356: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_short_sector':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:366: multiple definition of `cdf_read_short_sector'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:366: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_sat':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:386: multiple definition of `cdf_read_sat'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:386: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_count_chain':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:473: multiple definition of `cdf_count_chain'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:473: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_long_sector_chain':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:498: multiple definition of `cdf_read_long_sector_chain'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:498: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_short_sector_chain':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:545: multiple definition of `cdf_read_short_sector_chain'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:545: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_sector_chain':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:587: multiple definition of `cdf_read_sector_chain'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:587: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_dir':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:599: multiple definition of `cdf_read_dir'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:599: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_ssat':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:653: multiple definition of `cdf_read_ssat'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:653: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_short_stream':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:699: multiple definition of `cdf_read_short_stream'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:699: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_summary_info':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:734: multiple definition of `cdf_read_summary_info'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:734: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_read_property_info':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:758: multiple definition of `cdf_read_property_info'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:758: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_unpack_summary_info':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:957: multiple definition of `cdf_unpack_summary_info'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:957: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_print_classid':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:987: multiple definition of `cdf_print_classid'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:987: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_print_property_name':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:1023: multiple definition of `cdf_print_property_name'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:1023: first defined here
+ext/fileinfo/libmagic/.libs/cdf.o: In function `cdf_print_elapsed_time':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:1034: multiple definition of `cdf_print_elapsed_time'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf.c:1034: first defined here
+ext/fileinfo/libmagic/.libs/cdf_time.o: In function `cdf_timestamp_to_timespec':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:109: multiple definition of `cdf_timestamp_to_timespec'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:109: first defined here
+ext/fileinfo/libmagic/.libs/cdf_time.o: In function `cdf_timespec_to_timestamp':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:167: multiple definition of `cdf_timespec_to_timestamp'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:167: first defined here
+ext/fileinfo/libmagic/.libs/cdf_time.o: In function `cdf_ctime':
+/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:171: multiple definition of `cdf_ctime'
+ext/fileinfo/.libs/fileinfo.o:/var/tmp/portage/dev-lang/php-5.5.20/work/sapis-build/cli/ext/fileinfo/libmagic/cdf_time.c:171: first defined here
+collect2: error: ld returned 1 exit status
+Makefile:266: recipe for target 'sapi/cli/php' failed
+make: *** [sapi/cli/php] Error 1"
+336,http://jcssdev.pythonanywhere.com/bugs/66095/,info at rickvanderzwet dot nl,"Still relevant at FreeBSD 11.3-RELEASE. 
+
+Software versions:
+  - www/mod_dav_svn 1.12.2
+  - sysutils/php72-fileinfo 7.2.22
+  - www/apache24 - 2.4.41
+
+
+Simple test case:
+shell# echo ""This is a dummy file"" > /tmp/foo.txt
+
+Running code served by apache:
+<?php
+  $fi = finfo_open(FILEINFO_MIME);
+  echo finfo_file($fi, '/tmp/foo.txt');
+php>
+
+Running the code with mod_dav_svn enabled will cause the execution to fail. Disabling mod_dav_svn will execute correctly. Rationale also explained in FreeBSD PR report:"
+337,http://jcssdev.pythonanywhere.com/bugs/66486/,thiago at carvalho dot fm,Pull request
+338,http://jcssdev.pythonanywhere.com/bugs/66486/,derick@php.net,"hmm, don't see much of a problem with this ... I would not classify this as a bug that needs fixing."
+339,http://jcssdev.pythonanywhere.com/bugs/66694/,d dot v dot taylor at leedsmet dot ac dot uk,"I've hit this too on 5.5.11, but with a Bus Error rather than a SEGV (which will be a SPARC vs x86 thing). It particularly happens if I kill -QUIT FPM before it's handled *any* requests (and so hasn't received any events). This is the backtrace (using mdb):
+
+fpm_event_fire+0x1c(2e70687035002e, ffffffff, 1, ffffffff7fffd470, ffffffff7fffd460, ffffffffffffffff)
+fpm_event_port_wait+0x1ec(1014a3c50, 3e8, 2, 100efe858, 1768, 0)
+fpm_event_loop+0x3f0(0, 0, 0, 0, 0, 0)
+fpm_run+0xa8(ffffffff7ffff928, 0, a, 100effc80, ffffffff7df02a40, ffffffff7df02a40)
+main+0x12bc(1, ffffffffffffffff, ffffffff7ffffaa8, ffffffff7df001c0, 2880, 2800)
+_start+0x12c(0, 0, 0, 0, 0, 0)
+
+
+
+This is what I think is going on in my case (maybe yours too?) - long story short it's a memory reuse problem:
+
+fpm_event_port_init() malloc()s a chunk of memory to store events retrieved from the port, and doesn't initialise that memory at all. In my case it happened to have previously stored a pointer to a string used in processing php-fpm.conf.
+
+fpm_event_port_wait() uses port_getn() to look for events, with a parameter nget  - the intended number of events - set to 1. In normal use that nget parameter is updated to the number of events actually retrieved, but if port_getn is interrupted by a signal and no events have been sent to the port, nget is left at 1 (see"
+340,http://jcssdev.pythonanywhere.com/bugs/66694/,christian at kuehnke dot de,"I experienced this problem (php-fpm SIGSEGVs after sending it SIGQUIT immediately after startup) with php 7.0.12 and 5.6.27 on Solaris 11.3.
+
+I attached a one-liner patch for this problem. It is still not well tested, will update here later..."
+341,http://jcssdev.pythonanywhere.com/bugs/66694/,stadtkind2 at gmx dot de,"I have the same problem with PHP 7.1.2 on Solaris 11.3/SPARC. The applied patch did not fix it, I'm still getting coredumps:
+
+# pstack /var/cores/core.php-fpm.0.15837
+core '/var/cores/core.php-fpm.0.15837' of 15837:        /opt/php7/sbin/php-fpm
+ 0000000100caa288 fpm_event_fire (0, 0, 1, 20000, 0, 101076720) + 8
+ 0000000100caa0ac fpm_event_loop (0, 0, ffffffff7ffff550, 100de4880, 10059c5c8, fffffffffff0bdc0) + 2fc
+ 0000000100ca0024 fpm_run (ffffffff7ffffa24, bd350, 0, bd000, 6, ffffffff7f782a40) + 64
+ 0000000100cb22cc main (7b9400, ffffffffff7d8674, 827800, 0, 100dc3fb0, ffffffffff846a18) + eec
+ 000000010060dee8 _start (0, 0, 0, 0, 0, 100dc3fb0) + 108"
+342,http://jcssdev.pythonanywhere.com/bugs/66694/,stadtkind2 at gmx dot de,The 03-event_port.patch patch at
+343,http://jcssdev.pythonanywhere.com/bugs/67292/,ghpille at hotmail dot com,"When php_stream_eof is checked, after the server sent its FIN packet, it returns false when it should be true.
+
+This is caused by stream->eof being false OR php_stream_set_option not returning PHP_STREAM_OPTION_RETURN_ERR when it should
+
+        if (!stream->eof && PHP_STREAM_OPTION_RETURN_ERR ==
+                        php_stream_set_option(stream, PHP_STREAM_OPTION_CHECK_LIVENESS,
+                        0, NULL)) {
+                stream->eof = 1;
+        }
+        return stream->eof;"
+344,http://jcssdev.pythonanywhere.com/bugs/67292/,ghpille at hotmail dot com,"Exact error message is:
+
+Fatal error: Uncaught SoapFault Exception [HTTP] error fetching http headers"
+345,http://jcssdev.pythonanywhere.com/bugs/67351/,cmb@php.net,"I agree that the current handling of 304 Not Modified doesn't make
+much sense, but I wonder how that should be handled.  Just do
+nothing, but return true?  And how to handle file_get_contents()
+etc.?"
+346,http://jcssdev.pythonanywhere.com/bugs/67351/,Andy_Schmidt at HM-Software dot com,"Sorry - I thought I had already posted this:
+
+Expected result:
+----------------
+When a HTTP 304 response is returned, the copy() function must NOT touch the target file. 
+Suggestion: copy() could return a FALSE (indicating that nothing was copied), in case the script wishes to check the HTTP response to decide on any specialized processing, if any.
+
+
+As far as your follow-up question regarding file_get_contents(): The HTTP 304 response can only possibly occur because the caller had explicitly/intentionally produced an ""If-Modified-Since"" header. Consequently, I feel it is unlikely to break existing code, if file_get_contents() were to return FALSE rather than an empty string.  This implies to the caller correctly that NO data was returned, rather than falsely implying that the file has NEW data and the data is an empty file. 
+When the caller receives FALSE to an ""If-Modified-Since"", then their logic has the choice how to handle the FALSE condition (e.g., by short circuiting non-applicable code blocks if there is no new data.)"
+347,http://jcssdev.pythonanywhere.com/bugs/67351/,cmb@php.net,"> Sorry - I thought I had already posted this:
+
+You had.  Sorry.
+
+Anyhow, the behavior of copy() and file_get_contents() are clearly
+in error here, and not copying/fetching but returning false seems
+appropriate."
+348,http://jcssdev.pythonanywhere.com/bugs/67383/,langemeijer@php.net,This is a duplicate of
+349,http://jcssdev.pythonanywhere.com/bugs/67383/,langemeijer@php.net,"Obviously, this bug is not a duplicate of itself. Previous comment was a clerical error."
+350,http://jcssdev.pythonanywhere.com/bugs/67383/,brak at gameservers dot com,"This issue can cause you to be unable to restart PHP-FPM.  Specifically, this leaks the webserver -> php-fpm socket to any process you execute.  This prevents PHP-FPM from cleanly restarting until the process exits, because the socket will already be in use.
+
+Quick example:
+<?php
+        $p = popen('/bin/bash -c ""sleep 60""','w');
+        pclose($p);
+?>
+
+Now find the child process (ps aux | grep sleep) and lsof -p XXX -n:
+
+sleep   13443 nobody    0r  FIFO      0,8      0t0 10237775 pipe
+sleep   13443 nobody    1u   CHR      1,3      0t0     3920 /dev/null
+sleep   13443 nobody    2u   CHR      1,3      0t0     3920 /dev/null
+sleep   13443 nobody    4u  IPv4 10236693      0t0      TCP 127.0.0.1:cslistener->127.0.0.1:53151 (ESTABLISHED)
+sleep   13443 nobody    9u   REG      0,9        0     3918 [eventpoll]
+
+
+FD 4 there is the TCP connection from the PHP worker process to the web server."
+351,http://jcssdev.pythonanywhere.com/bugs/67383/,daverandom@php.net,"It is, in my opinion, not desirable to do this blindly for all fds.
+
+It should be possible to specify this on a per-fd basis. For streams this can be done with a context option (or multiple context options for sockets vs files), but for e.g. mysqlnd it's trickier - most likely these should default to not being inheritable, but this will need to be taken care of by the extension.
+
+A stream context option would cover 99% of cases where it's relevant, though. I would be fine with having the context option default to setting the flag, and needing to explicitly make an fd heritable, but this would be a BC break."
+352,http://jcssdev.pythonanywhere.com/bugs/67414/,roctom at gmail dot com,"Hi,
+
+I'm trying to track down a memory leak in some of my code and I'm seeing similar munmap with a size of 266240, would anyone know where that allocation request is made?"
+353,http://jcssdev.pythonanywhere.com/bugs/67414/,bjori@php.net,"This isn't PhD fault.
+I do believe it may be sqlite3 issue or the engine.
+
+IIRC it happens when committing ""big transaction"" into sqlite3"
+354,http://jcssdev.pythonanywhere.com/bugs/67736/,tyrael@php.net,"I think we should fix this.
+rfc6265 (latest rfc defining http cookies) states that 
+""Servers SHOULD NOT include more than one Set-Cookie header field in the same response with the same cookie-name."""
+355,http://jcssdev.pythonanywhere.com/bugs/67736/,Danack at basereality dot com,"(X-posting from PR)
+
+The PHP code does not have a bug. The RFC does not forbid sending multiple cookies with the same name:
+
+""Servers SHOULD NOT include more than one Set-Cookie header field in the same response with the same cookie-name. (See Section 5.2 for how user agents handle this case.)""
+
+Although it is definitely not recommended, the RFC does not say MUST NOT.
+
+Even if it was forbidden by the RFC, it is not PHP's job to enforce conformance to RFCs. That is up to the programmer using PHP to not send improper data.
+
+The idea of having setcookie magically modifying the cookie header that is sent is not good. It would be adding more magic behaviour to PHP to cover up the fact that the programmer who is calling setcookie() has a bug in their code.
+
+Adding a warning is enough. It tells people that they are doing something that is probably unwise, but is technically allowed. Doing anything more is not only the wrong thing to do anyway, but introduces a backwards compatibility break for no good reason.
+
+If someone is unaware they are calling setcookie() twice with the same name, the error will alert them and allow them to fix their code.
+
+If someone is deliberately calling setcookie() twice with the same name (e.g. for a legacy application that knows how to handle multiple cookies with the same name) then they will need to continue using the current behaviour.
+
+Changing the behaviour just because it would be a bit 'better' is not a good idea. There needs to be a clear reason for changing the behaviour, and I don't think there is one here."
+356,http://jcssdev.pythonanywhere.com/bugs/67736/,craig at craigfrancis dot co dot uk,"There might be a case with sessions... e.g. if you called session_start() more than once.
+
+While this is not normal, in a high security application you might do a session_start() and a session_regenerate_id(true) when the user logs in... then because of"
+357,http://jcssdev.pythonanywhere.com/bugs/68230/,gm dot outside+php at gmail dot com,"I've just added a patch that partially fixes the test suite.  My patch extracts the name of the configuration file and/or additional configuration files provided to testsuite's PHP binary and executes the spawned PHP binary with the same set of files.  It also extracts the extension_dir and supplies it to the spawned process.
+
+NOTE: This patch is just to fix our build environment so we can build PHP.  This patch does NOT address the real issue of picking up the system-wide configuration files and it misses any custom configuration supplied to the test suite.
+
+To properly solve the issue a new mechanism needs to be invented to ensure that the tests which require spawned children get the proper environment inherited from the primary test suite process."
+358,http://jcssdev.pythonanywhere.com/bugs/68230/,rainer dot jung at kippdata dot de,"This worked for me (and was needed) for PHP 7. I also had to add 
+
+$custom_ini .= "" -d 'extension=openssl.so'"";
+
+to load the openssl extension (which I had build as a dynamically loadable one)."
+359,http://jcssdev.pythonanywhere.com/bugs/68466/,fmargaine@php.net,"Hi,
+
+This is the equivalent you're looking for:
+
+<?php
+$o = new SplFileObject(__FILE__);
+
+while (!$o->eof()) {
+  var_dump($o->fgets());
+}
+
+?>
+
+However, it *is* weird that the iterator doesn't stop at the end of file."
+360,http://jcssdev.pythonanywhere.com/bugs/68466/,fmargaine@php.net,"I can't actually reproduce having bool(false) at the end. On a clean build (5.5/5.6), SplFileObject iterates correctly."
+361,http://jcssdev.pythonanywhere.com/bugs/68466/,tim_siebels_aurich at yahoo dot de,"It sure does. But it is different from the fopen variation.
+
+Take a second look at expected/actual. 
+
+I expect to have false at the end, because if you use fopen() you get false at the end. Either of those should be changed."
+362,http://jcssdev.pythonanywhere.com/bugs/68466/,requinix@php.net,"You need a trailing newline at the end of the file.
+
+The regular file functions work on streams, not literally files. You have to try to read past the end of the stream before feof() will know to return true. However when fread() reads the last time there is nothing left so it returns false.
+SplFileObject works on streams too but entire lines at a time. It also considers an empty line to still be a line, which is why it returns """" instead of false - which fits with how most text editors treat trailing newlines too.
+
+I don't consider this to be a bug since (1) as fmargaine said the two code chunks are not actually equivalent, and (2) the two methods read files in a slightly different way."
+363,http://jcssdev.pythonanywhere.com/bugs/68466/,tim_siebels_aurich at yahoo dot de,"To (1):
+  fmargaine also provided an equivalent snippet, that doesn't match the output.
+
+To (2):
+  Of course they do, that's why I opened this bug :P
+  I don't really understand why SplFileObject works differently. 
+  
+  > SplFileObject works on streams too but entire lines at a time.
+
+  SplFileObject has methods that map the name from fopen and friends. 
+  As far as I know SplFileObject doesn't use entire lines. 
+  I can SplFileObject::fread from it as well.
+  fgets() uses entire lines as well, but the output still differs.  
+
+I see why it is good to have it when iterating over the SplFileObject. Otherwise every last line would be false.
+However, I don't see why they should be different. I expect them to be the same. They provide the same functionality and even the same names."
+364,http://jcssdev.pythonanywhere.com/bugs/68466/,cmb@php.net,"> I see why it is good to have it when iterating over the
+> SplFileObject. Otherwise every last line would be false.
+> However, I don't see why they should be different. I expect them
+> to be the same. They provide the same functionality and even the
+> same names.
+
+So you really think the more useful behavior should be changed for
+the sake of consistency with rather low-level (C'ish) behavior?
+I'd rather change the names of the methods instead. Neither is
+obviously something that can be easily done with regard to
+backward compatibility, though."
+365,http://jcssdev.pythonanywhere.com/bugs/68606/,whsv26 at gmail dot com,It's very frustrating. I can't implement things like trampolining and big linked lists cause of this bug.

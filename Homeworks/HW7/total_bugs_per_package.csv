@@ -1,0 +1,35 @@
+package,total
+Website problem,1
+ODBC related,1
+SOAP related,7
+PDO MySQL,1
+Apache2 related,1
+Compile Failure,2
+Filesystem function related,1
+OpenSSL related,2
+Class/Object related,1
+Streams related,2
+FPM related,5
+Safe Mode/open_basedir,1
+*Directory/Filesystem functions,1
+Program Execution,1
+PDO OCI,2
+*General Issues,4
+Variables related,1
+Testing related,2
+Readline related,1
+SimpleXML related,1
+Filter related,2
+Zip Related,1
+PDO related,1
+*XML functions,1
+FTP related,1
+Performance problem,1
+Reproducible crash,3
+Scripting Engine problem,3
+SQLite related,1
+SPL related,3
+Date/time related,2
+Unknown/Other Function,1
+XMLRPC-EPI related,1
+Doc Build problem,1
