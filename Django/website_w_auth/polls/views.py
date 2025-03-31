@@ -73,22 +73,3 @@ def logout(request):
     del request.session["user"]
     return HttpResponseRedirect(reverse("polls:login"))
 
-def register(request):
-    if request.GET:
-        # Create a model instance and populate it with data from the request
-        uname = request.GET["username"]
-        pwd = request.GET["password"]
-        email = request.GET["email"]
-
-        user = User(username=uname, password=pwd, email=email)
-
-        try:
-            user.full_clean()
-            user.password = make_password(pwd)  # encrypts
-            # if we reach here, the validation succeeded
-            user.save()  # saves on the db
-            # redirect to the login page
-            return HttpResponseRedirect(reverse('polls:login'))
-        except ValidationError as e:
-            pass # do something with it, as you wish
-        return HttpResponseRedirect(reverse('polls:index'))
