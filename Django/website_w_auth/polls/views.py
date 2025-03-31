@@ -1,8 +1,10 @@
+from django.contrib.auth.hashers import check_password, make_password
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from .models import Question, Choice
+from .models import Question, Choice, User
 
 
 def index(request):
@@ -30,6 +32,9 @@ class ResultsView(DetailView):
     template_name = "polls/results.html"
 
 def vote(request, question_id):
+    # make sure it is authenticated, if not authenticated, send to log-in page
+    if request.session.get("user", None) is None:
+        return HttpResponseRedirect(reverse("polls:login"))
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
@@ -43,3 +48,47 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+## ADDED FOR BLOG APP: LOGIN / LOGOUT
+# https://stackoverflow.com/a/43793754
+def login(request):
+    errors = None
+    if request.POST:
+        # Create a model instance and populate it with data from the request
+        uname = request.POST["username"]
+        pwd = request.POST["password"]
+        user = User.objects.filter(username=uname)
+
+        if len(user) > 0 and check_password(pwd, user[0].password):
+            # create a new session
+            request.session["user"] = uname
+            return HttpResponseRedirect(reverse('polls:index'))
+        else:
+            errors = [('authentication', "Login error")]
+
+    return render(request, 'polls/login.html', {'errors': errors})
+
+def logout(request):
+    # remove the logged-in user information
+    del request.session["user"]
+    return HttpResponseRedirect(reverse("polls:login"))
+
+def register(request):
+    if request.GET:
+        # Create a model instance and populate it with data from the request
+        uname = request.GET["username"]
+        pwd = request.GET["password"]
+        email = request.GET["email"]
+
+        user = User(username=uname, password=pwd, email=email)
+
+        try:
+            user.full_clean()
+            user.password = make_password(pwd)  # encrypts
+            # if we reach here, the validation succeeded
+            user.save()  # saves on the db
+            # redirect to the login page
+            return HttpResponseRedirect(reverse('polls:login'))
+        except ValidationError as e:
+            pass # do something with it, as you wish
+        return HttpResponseRedirect(reverse('polls:index'))
