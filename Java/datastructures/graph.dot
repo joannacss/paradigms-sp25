@@ -1,0 +1,10 @@
+digraph myg {
+	a->b
+	a->e
+	b->c
+	b->d
+	c->e
+	d->b
+	e->a
+	e->f
+}
