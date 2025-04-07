@@ -11,11 +11,12 @@ public class ShapesApp {
 		for(Shape s: shapes){
 			System.out.println(s.calculateArea());
 			// TODO: how to check runtime type?
-			if(s instanceof OrthogonalShape)
-				System.out.println("s is a OrthogonalShape!");
+			if(s instanceof OrthogonalShape){
+				System.out.println("THIS IS A OrthogonalShape");
+			}
 
 			// TODO: how to (nicely) print an object?
-			System.out.println(s); // .toString()
+			
 		}
 	}
 }

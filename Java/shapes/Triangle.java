@@ -8,9 +8,4 @@ public class Triangle extends OrthogonalShape{
 		return (this.base * this.height)/2;
 	}
 
-	
-	@Override
-	public String toString(){
-		return "Here I am"; 
-	}
 }
