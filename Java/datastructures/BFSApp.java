@@ -1,8 +1,10 @@
 package datastructures;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+
 public class BFSApp {
     public static void main(String[] args) {
         Map<String, List<String>> graph = new HashMap<>();
@@ -16,7 +18,6 @@ public class BFSApp {
 
         BFS bfs = new BFS();
         System.out.println(bfs.traverse("a", graph));
-
 
     }
 }
