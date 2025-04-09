@@ -8,4 +8,9 @@ public abstract class OrthogonalShape implements Shape{
 		this.height = h;
 	}
 	
+
+	@Override
+	public String toString(){
+		return getClass().getName() + " base = " + this.base + " height =" + this.height;
+	}
 }

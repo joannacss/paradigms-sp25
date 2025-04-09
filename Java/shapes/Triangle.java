@@ -8,4 +8,5 @@ public class Triangle extends OrthogonalShape{
 		return (this.base * this.height)/2;
 	}
 
+	
 }

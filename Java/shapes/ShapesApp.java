@@ -16,7 +16,7 @@ public class ShapesApp {
 			}
 
 			// TODO: how to (nicely) print an object?
-			
+			System.out.println(s);
 		}
 	}
 }
