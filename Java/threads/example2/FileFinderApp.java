@@ -19,9 +19,11 @@ public class FileFinderApp {
             t1.join();
             t2.join();
             t3.join();
-        }catch(InterruptedException ex){
-            System.out.println("Oh well!");
+        }catch (InterruptedException ex){
+            ex.printStackTrace();
         }
+
+
         System.out.println("In main, after starting threads...");
         System.out.println("Thread 1 found " + f1.getFoundFiles().size() + " files.");
         System.out.println("Thread 2 found " + f2.getFoundFiles().size() + " files.");

@@ -31,10 +31,11 @@ public class FileFinder implements Runnable {
                         this.foundFiles.add(path);
                         System.out.printf("Found by %s the file %s\n", threadName, path);
                     });
-        } catch (IOException e) {
-            System.err.println("Error reading directory: " + e.getMessage());
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return;
         }
+
     }
 
     public List<Path> getFoundFiles() {
