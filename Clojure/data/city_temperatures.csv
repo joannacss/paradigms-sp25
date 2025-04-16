@@ -1,0 +1,215 @@
+City,Temperature
+Los Angeles,70.5
+Honolulu,80.3
+South Bend,55.8
+Los Angeles,71.2
+Honolulu,81.0
+South Bend,54.5
+Los Angeles,69.8
+Honolulu,79.5
+South Bend,52.1
+Los Angeles,72.6
+Honolulu,82.2
+South Bend,50.9
+Los Angeles,68.9
+Honolulu,78.8
+South Bend,49.6
+Los Angeles,73.4
+Honolulu,83.1
+South Bend,48.2
+Los Angeles,67.5
+Honolulu,77.4
+South Bend,46.9
+Los Angeles,74.1
+Honolulu,84.3
+South Bend,45.7
+Los Angeles,66.8
+Honolulu,76.0
+South Bend,44.4
+Los Angeles,75.2
+Honolulu,85.5
+South Bend,43.2
+Los Angeles,65.4
+Honolulu,74.6
+South Bend,41.9
+Los Angeles,76.3
+Honolulu,86.7
+South Bend,40.7
+Los Angeles,64.1
+Honolulu,73.2
+South Bend,39.4
+Los Angeles,77.4
+Honolulu,87.8
+South Bend,38.2
+Los Angeles,63.2
+Honolulu,72.0
+South Bend,36.9
+Los Angeles,78.6
+Honolulu,88.9
+South Bend,35.7
+Los Angeles,62.3
+Honolulu,70.8
+South Bend,34.4
+Los Angeles,79.8
+Honolulu,90.0
+South Bend,33.2
+Los Angeles,61.0
+Honolulu,69.5
+South Bend,31.9
+Los Angeles,80.7
+Honolulu,91.2
+South Bend,30.7
+Los Angeles,59.8
+Honolulu,68.2
+South Bend,29.4
+Los Angeles,81.9
+Honolulu,92.4
+South Bend,28.2
+Los Angeles,58.5
+Honolulu,67.0
+South Bend,26.9
+Los Angeles,83.1
+Honolulu,93.5
+South Bend,25.7
+Los Angeles,57.2
+Honolulu,65.7
+South Bend,24.4
+Los Angeles,84.3
+Honolulu,94.6
+South Bend,23.2
+Los Angeles,56.0
+Honolulu,64.5
+South Bend,21.9
+Los Angeles,85.5
+Honolulu,95.7
+South Bend,20.7
+Los Angeles,54.7
+Honolulu,63.2
+South Bend,19.4
+Los Angeles,86.7
+Honolulu,96.8
+South Bend,18.2
+Los Angeles,53.4
+Honolulu,62.0
+South Bend,16.9
+Los Angeles,87.8
+Honolulu,97.9
+South Bend,15.7
+Los Angeles,52.2
+Honolulu,60.8
+South Bend,14.4
+Los Angeles,89.0
+Honolulu,99.0
+South Bend,13.2
+Los Angeles,50.9
+Honolulu,59.5
+South Bend,11.9
+Los Angeles,90.1
+Honolulu,100.2
+South Bend,10.7
+Los Angeles,49.7
+Honolulu,58.3
+South Bend,9.4
+Los Angeles,91.3
+Honolulu,101.3
+South Bend,8.2
+Los Angeles,48.4
+Honolulu,57.0
+South Bend,6.9
+Los Angeles,92.4
+Honolulu,102.4
+South Bend,5.7
+Los Angeles,47.2
+Honolulu,55.8
+South Bend,4.4
+Los Angeles,93.5
+Honolulu,103.5
+South Bend,3.2
+Los Angeles,46.0
+Honolulu,54.5
+South Bend,1.9
+Los Angeles,94.6
+Honolulu,104.7
+South Bend,0.7
+Los Angeles,44.7
+Honolulu,53.3
+South Bend,-0.6
+Los Angeles,95.7
+Honolulu,105.8
+South Bend,-1.8
+Los Angeles,43.4
+Honolulu,52.1
+South Bend,-3.1
+Los Angeles,96.8
+Honolulu,106.9
+South Bend,-4.3
+Los Angeles,42.2
+Honolulu,50.9
+South Bend,-5.6
+Los Angeles,97.9
+Honolulu,108.0
+South Bend,-6.8
+Los Angeles,41.0
+Honolulu,49.7
+South Bend,-8.1
+Los Angeles,99.0
+Honolulu,109.2
+South Bend,-9.3
+Los Angeles,39.7
+Honolulu,48.4
+South Bend,-10.6
+Los Angeles,100.2
+Honolulu,110.3
+South Bend,-11.8
+Los Angeles,38.5
+Honolulu,47.2
+South Bend,-13.1
+Los Angeles,101.3
+Honolulu,111.4
+South Bend,-14.3
+Los Angeles,37.2
+Honolulu,46.0
+South Bend,-15.6
+Los Angeles,102.4
+Honolulu,112.5
+South Bend,-16.8
+Los Angeles,36.0
+Honolulu,44.7
+South Bend,-18.1
+Los Angeles,103.5
+Honolulu,113.6
+South Bend,-19.3
+Los Angeles,34.7
+Honolulu,43.5
+South Bend,-20.6
+Los Angeles,104.7
+Honolulu,114.8
+South Bend,-21.8
+Los Angeles,33.5
+Honolulu,42.2
+South Bend,-23.1
+Los Angeles,105.8
+Honolulu,115.9
+South Bend,-24.3
+Los Angeles,32.2
+Honolulu,41.0
+South Bend,-25.6
+Los Angeles,106.9
+Honolulu,117.0
+South Bend,-26.8
+Los Angeles,31.0
+Honolulu,39.7
+South Bend,-28.1
+Los Angeles,108.0
+Honolulu,118.2
+South Bend,-29.3
+Los Angeles,29.7
+Honolulu,38.5
+South Bend,-30.6
+Los Angeles,109.2
+Honolulu,119.3
+South Bend,-31.8
+Los Angeles,28.5
+Honolulu,37.2
+South Bend,-33.1
+Los Angeles,110
