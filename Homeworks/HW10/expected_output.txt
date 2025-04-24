@@ -1,0 +1,30 @@
+QUESTION 1:
+➜ When running the code with n = 5 (i.e., clj question1.clj 5). The output is (the last number is the sum).
+1
+4
+9
+16
+25
+Sum = 55
+
+➜ When running the code with n = 1 (clj question1.clj 1). The output is (the last number is the sum).
+1
+Sum = 1
+
+➜ clj -M question1.clj 3
+1
+4
+9
+Sum = 14
+
+
+
+QUESTION 2:
+It will print 8.19 
+(which is 7% of $117)
+
+QUESTION 3:
+For the temperatures.txt in the repository
+min=  0.8333333333333334
+max=  23.666666666666664
+avg=  10.759615384615389
