@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ac8f134-f3af-440e-90c8-6e9ed57476ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../website_w_auth/polls/templates/polls/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../website_w_auth/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../website_w_auth/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../website_w_auth/polls/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../website_w_auth/polls/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../website_w_auth/polls/templates/polls/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/../website_w_auth/polls/templates/polls/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../website_w_auth/polls/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../website_w_auth/polls/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../website_w_auth/polls/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../website_w_auth/polls/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/polls/templates/polls/login.html" beforeDir="false" />
-    </list>
+    <list default="true" id="8ac8f134-f3af-440e-90c8-6e9ed57476ab" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,7 +34,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/joanna/Documents/Portfolio/GitHub/joannacss/paradigms-sp25/Django/website_with_auth",
+    "last_opened_file_path": "/Users/joanna/Documents/Portfolio/GitHub/joannacss/paradigms-sp25/Django/website_with_auth_images",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -99,6 +90,7 @@
       <workItem from="1710773567751" duration="5214000" />
       <workItem from="1711379036828" duration="394000" />
       <workItem from="1743441845522" duration="2199000" />
+      <workItem from="1745857643342" duration="107000" />
     </task>
     <servers />
   </component>
